@@ -1,0 +1,25 @@
+{
+  "word": "electrophysiologist",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 56080,
+      "total": 487
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "电生理学",
+      "percent": 89
+    },
+    {
+      "text": "电现象",
+      "percent": 11
+    }
+  ],
+  "trans": [
+    {
+      "text": "电生理学家"
+    }
+  ]
+}

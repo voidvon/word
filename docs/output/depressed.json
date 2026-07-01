@@ -1,0 +1,48 @@
+{
+  "word": "depressed",
+  "ipa": "[dɪˈprest]",
+  "tags": [
+    "TEM4",
+    "GRE",
+    "TOEFL"
+  ],
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 6926,
+      "total": 106444
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "沮丧的",
+      "percent": 56
+    },
+    {
+      "text": "萧条的",
+      "percent": 21
+    },
+    {
+      "text": "不景气的",
+      "percent": 17
+    },
+    {
+      "text": "降低的",
+      "percent": 3
+    },
+    {
+      "text": "动词depress的过去式及过去分词.",
+      "percent": 3
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "沮丧的；萧条的；压低的"
+    },
+    {
+      "pos": "v.",
+      "text": "使沮丧；使萧条（depress的过去式和过去分词形式）；压低"
+    }
+  ]
+}

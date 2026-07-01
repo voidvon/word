@@ -1,0 +1,36 @@
+{
+  "word": "insipid",
+  "ipa": "[ɪnˈsɪpɪd]",
+  "tags": [
+    "TEM8",
+    "GRE",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 25124,
+    "total": 340
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 32119,
+      "total": 3872
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "枯燥乏味的",
+      "percent": 50
+    },
+    {
+      "text": "没有味道的",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "清淡的；无趣的"
+    }
+  ]
+}

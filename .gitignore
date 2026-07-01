@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+
+# local env files
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# editor and tooling caches
+.vite/
+.cache/
+.eslintcache
+coverage/
+
+# TypeScript
+*.tsbuildinfo

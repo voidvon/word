@@ -1,0 +1,27 @@
+{
+  "word": "medium-sized",
+  "ipa": "[ˈmi:diəmˈsaizd]",
+  "spoken": {
+    "rank": 29326,
+    "total": 264
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 12008,
+      "total": 38431
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "中型的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "中型的，中等大小的；普通型的"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "word": "panty",
+  "ipa": "['pæntɪ]",
+  "spoken": {
+    "rank": 3602,
+    "total": 8126,
+    "lemmas": "panties[7097]"
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 28805,
+      "total": 5233
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "女裤",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "女裤；童裤（等于panties）"
+    }
+  ]
+}

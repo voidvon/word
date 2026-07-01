@@ -1,0 +1,31 @@
+{
+  "word": "silently",
+  "ipa": "[ˈsaɪləntli]",
+  "spoken": {
+    "rank": 7516,
+    "total": 2396
+  },
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 10894,
+      "total": 46240
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "寂静地",
+      "percent": 67
+    },
+    {
+      "text": "沉默地",
+      "percent": 33
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "默默地；静静地"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "word": "fastest",
+  "ipa": "['fɑ:stɪst]",
+  "trans_percents": [
+    {
+      "text": "最快的",
+      "percent": 99
+    },
+    {
+      "text": "形容词fast的最高级形式.",
+      "percent": 1
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "最快速的（fast 的最高级）"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "word": "appall",
+  "ipa": "[ə'pɔ:l]",
+  "frm": "appalled, appalling, appalls",
+  "tags": [
+    "CET6",
+    "GRE"
+  ],
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 21627,
+      "total": 10722
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "使 ... 惊骇",
+      "percent": 50
+    },
+    {
+      "text": "使 ... 胆寒",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "使胆寒；使惊骇"
+    }
+  ]
+}

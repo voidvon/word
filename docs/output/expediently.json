@@ -1,0 +1,27 @@
+{
+  "word": "expediently",
+  "ipa": "[ɪk'spi:dɪəntlɪ]",
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 49563,
+      "total": 924
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "方便地",
+      "percent": 92
+    },
+    {
+      "text": "权宜地",
+      "percent": 8
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "方便地；得当地；便利地"
+    }
+  ]
+}

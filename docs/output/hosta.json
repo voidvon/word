@@ -1,0 +1,27 @@
+{
+  "word": "hosta",
+  "ipa": "['hɒstə]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 27578,
+      "total": 5837
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "玉簪属植物",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "玉簪属草本植物"
+    },
+    {
+      "pos": "n.",
+      "text": "(Hosta)人名；(土)霍斯塔"
+    }
+  ]
+}

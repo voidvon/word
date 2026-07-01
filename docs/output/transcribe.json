@@ -1,0 +1,42 @@
+{
+  "word": "transcribe",
+  "ipa": "[trænˈskraɪb]",
+  "frm": "transcribed, transcribing, transcribes",
+  "tags": [
+    "CET6",
+    "TEM8",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 17846,
+    "total": 593,
+    "lemmas": "transcribed[381]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 12733,
+      "total": 33960
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "转录",
+      "percent": 54
+    },
+    {
+      "text": "抄写",
+      "percent": 39
+    },
+    {
+      "text": "用音标标出",
+      "percent": 7
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "转录；抄写"
+    }
+  ]
+}

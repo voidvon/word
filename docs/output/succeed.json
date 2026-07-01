@@ -1,0 +1,47 @@
+{
+  "word": "succeed",
+  "ipa": "[səkˈsi:d]",
+  "frm": "succeeded, succeeding, succeeds",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研"
+  ],
+  "spoken": {
+    "rank": 1870,
+    "total": 22094,
+    "lemmas": "succeeded[6126] succeeding[915] succeeds[1410]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 2565,
+      "total": 503856
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "成功",
+      "percent": 91
+    },
+    {
+      "text": "继承",
+      "percent": 8
+    },
+    {
+      "text": "接着发生",
+      "percent": 1
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vi.",
+      "text": "成功；继承；继任；兴旺"
+    },
+    {
+      "pos": "vt.",
+      "text": "继承；接替；继…之后"
+    }
+  ]
+}

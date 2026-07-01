@@ -1,0 +1,50 @@
+{
+  "word": "amateur",
+  "ipa": "[ˈæmətə(r)]",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研",
+    "GRE",
+    "TOEFL",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 3538,
+    "total": 8401,
+    "lemmas": "amateurs[2095]"
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 6961,
+      "total": 105833
+    },
+    {
+      "pos": "NOUN",
+      "rank": 9859,
+      "total": 56150
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "业余爱好者",
+      "percent": 67
+    },
+    {
+      "text": "外行",
+      "percent": 33
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "爱好者；业余爱好者；外行"
+    },
+    {
+      "pos": "adj.",
+      "text": "业余的；外行的"
+    }
+  ]
+}

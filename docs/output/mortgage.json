@@ -1,0 +1,56 @@
+{
+  "word": "mortgage",
+  "ipa": "[ˈmɔ:gɪdʒ]",
+  "frm": "mortgaged, mortgaging, mortgages",
+  "tags": [
+    "CET6",
+    "TEM8",
+    "考研",
+    "GRE",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 3769,
+    "total": 7503,
+    "lemmas": "mortgaged[678] mortgages[880]"
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 2258,
+      "total": 591329
+    },
+    {
+      "pos": "VERB",
+      "rank": 35372,
+      "total": 2896
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "抵押",
+      "percent": 56
+    },
+    {
+      "text": "抵押贷款",
+      "percent": 27
+    },
+    {
+      "text": "按揭",
+      "percent": 17
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "抵押"
+    },
+    {
+      "pos": "n.",
+      "text": "抵押"
+    },
+    {
+      "text": "房屋抵押贷款"
+    }
+  ]
+}

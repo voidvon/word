@@ -1,0 +1,40 @@
+{
+  "word": "bouncer",
+  "ipa": "[ˈbaʊnsə(r)]",
+  "spoken": {
+    "rank": 9205,
+    "total": 1719,
+    "lemmas": "bouncers[425]"
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 19485,
+      "total": 13713
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "巨大的东西",
+      "percent": 34
+    },
+    {
+      "text": "板球",
+      "percent": 22
+    },
+    {
+      "text": "看门保镖",
+      "percent": 22
+    },
+    {
+      "text": "巨人",
+      "percent": 22
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "保镖；巨大的东西；跳跃的人；吹牛者"
+    }
+  ]
+}

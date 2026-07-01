@@ -1,0 +1,23 @@
+{
+  "word": "unitard",
+  "ipa": "['ju:nɪtɑ:d]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 55041,
+      "total": 542
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "通常为体操运动员、舞蹈演员所穿",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "弹力全身紧身衣（一般指运动员或舞蹈演员穿的衣裤，也用作时装）"
+    }
+  ]
+}

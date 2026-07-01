@@ -1,0 +1,23 @@
+{
+  "word": "blubbery",
+  "ipa": "[b'lʌbərɪ]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 59283,
+      "total": 333
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "鲸脂的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "鲸脂的"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "word": "phosphide",
+  "ipa": "['fɒsfɪd]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 53855,
+      "total": 612
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "磷化物",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "[无化] 磷化物"
+    }
+  ]
+}

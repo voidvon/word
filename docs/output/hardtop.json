@@ -1,0 +1,34 @@
+{
+  "word": "hardtop",
+  "ipa": "[ˈhɑ:dtɒp]",
+  "tags": [
+    "TEM8"
+  ],
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 26776,
+      "total": 6333
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "有金属顶盖的汽车",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "有金属顶盖的汽车；室内电影院"
+    },
+    {
+      "pos": "adj.",
+      "text": "有金属顶盖的"
+    },
+    {
+      "pos": "vt.",
+      "text": "给…铺硬质路面"
+    }
+  ]
+}

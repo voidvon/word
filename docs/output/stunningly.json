@@ -1,0 +1,31 @@
+{
+  "word": "stunningly",
+  "ipa": "['stʌnɪŋlɪ]",
+  "spoken": {
+    "rank": 31863,
+    "total": 231
+  },
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 17819,
+      "total": 16746
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "令人目瞪口呆地",
+      "percent": 50
+    },
+    {
+      "text": "惊人地",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "绝妙地；令人震惊地；使人目瞪口呆地"
+    }
+  ]
+}

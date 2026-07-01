@@ -1,0 +1,77 @@
+{
+  "word": "smash",
+  "ipa": "[smæʃ]",
+  "frm": "smashed, smashing, smashes",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 1866,
+    "total": 22192,
+    "lemmas": "smashed[7969] smashes[643] smashing[3428]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 6719,
+      "total": 112805
+    },
+    {
+      "pos": "NOUN",
+      "rank": 10676,
+      "total": 48096
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "粉碎",
+      "percent": 48
+    },
+    {
+      "text": "打碎",
+      "percent": 27
+    },
+    {
+      "text": "破碎",
+      "percent": 10
+    },
+    {
+      "text": "猛撞",
+      "percent": 7
+    },
+    {
+      "text": "撞击",
+      "percent": 6
+    },
+    {
+      "text": "极为成功的",
+      "percent": 1
+    },
+    {
+      "text": "轰动的演出",
+      "percent": 1
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "破碎；扣球；冲突；大败"
+    },
+    {
+      "pos": "vt.",
+      "text": "粉碎；使破产；溃裂"
+    },
+    {
+      "pos": "adj.",
+      "text": "了不起的；非常轰动的；出色的"
+    },
+    {
+      "pos": "vi.",
+      "text": "粉碎；打碎"
+    }
+  ]
+}

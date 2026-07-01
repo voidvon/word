@@ -1,0 +1,47 @@
+{
+  "word": "ensign",
+  "ipa": "[ˈensən]",
+  "tags": [
+    "TEM8",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 6313,
+    "total": 3194
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 24070,
+      "total": 8261
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "海军少尉",
+      "percent": 34
+    },
+    {
+      "text": "国旗",
+      "percent": 27
+    },
+    {
+      "text": "军旗",
+      "percent": 21
+    },
+    {
+      "text": "徽章",
+      "percent": 18
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "旗；海军少尉；徽章"
+    },
+    {
+      "pos": "n.",
+      "text": "(Ensign)人名；(英)恩赛因"
+    }
+  ]
+}

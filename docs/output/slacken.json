@@ -1,0 +1,40 @@
+{
+  "word": "slacken",
+  "ipa": "[ˈslækən]",
+  "frm": "slackened, slackening, slackens",
+  "tags": [
+    "TEM4",
+    "GRE"
+  ],
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 31991,
+      "total": 3915
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "使松弛",
+      "percent": 58
+    },
+    {
+      "text": "使缓慢",
+      "percent": 28
+    },
+    {
+      "text": "变弱",
+      "percent": 14
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vi.",
+      "text": "松劲，懈怠；变松弛；变缓慢"
+    },
+    {
+      "pos": "vt.",
+      "text": "使缓慢；使松弛"
+    }
+  ]
+}

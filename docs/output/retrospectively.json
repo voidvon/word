@@ -1,0 +1,23 @@
+{
+  "word": "retrospectively",
+  "ipa": "[ˌretrə'spektɪvlɪ]",
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 24889,
+      "total": 7596
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "回顾地",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "回顾地"
+    }
+  ]
+}

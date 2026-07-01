@@ -1,0 +1,31 @@
+{
+  "word": "seaworthy",
+  "ipa": "[ˈsi:wɜ:ði]",
+  "spoken": {
+    "rank": 33918,
+    "total": 209
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 38646,
+      "total": 2207
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "经得起风浪的",
+      "percent": 50
+    },
+    {
+      "text": "适于航海的",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "适于航海的；经得起航海的"
+    }
+  ]
+}

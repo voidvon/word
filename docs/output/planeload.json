@@ -1,0 +1,23 @@
+{
+  "word": "planeload",
+  "ipa": "[ˈpleɪnləʊd]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 58167,
+      "total": 387
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "名词",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "飞机负载量；飞机的载客量"
+    }
+  ]
+}

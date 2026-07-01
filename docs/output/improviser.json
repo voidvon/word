@@ -1,0 +1,30 @@
+{
+  "word": "improviser",
+  "ipa": "['ɪmprəvaɪzə]",
+  "tags": [
+    "TOEFL"
+  ],
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 33759,
+      "total": 3324
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "即兴诗人",
+      "percent": 60
+    },
+    {
+      "text": "即席演奏者",
+      "percent": 40
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "即兴诗人；即席演奏者；即兴创作者"
+    }
+  ]
+}

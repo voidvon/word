@@ -1,0 +1,43 @@
+{
+  "word": "obscurity",
+  "ipa": "[əbˈskjʊərəti]",
+  "tags": [
+    "TEM8",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 18210,
+    "total": 573
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 16632,
+      "total": 19501
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "晦涩",
+      "percent": 64
+    },
+    {
+      "text": "不明",
+      "percent": 20
+    },
+    {
+      "text": "昏暗",
+      "percent": 8
+    },
+    {
+      "text": "不出名",
+      "percent": 8
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "朦胧；阴暗；晦涩；身份低微；不分明"
+    }
+  ]
+}

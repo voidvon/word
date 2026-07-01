@@ -1,0 +1,57 @@
+{
+  "word": "terminate",
+  "ipa": "[ˈtɜ:mɪneɪt]",
+  "frm": "terminated, terminating, terminates",
+  "tags": [
+    "CET6",
+    "TEM4",
+    "考研",
+    "GRE",
+    "TOEFL",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 4830,
+    "total": 5005,
+    "lemmas": "terminated[2262] terminating[426]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 4481,
+      "total": 221420
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "终止",
+      "percent": 86
+    },
+    {
+      "text": "结束",
+      "percent": 12
+    },
+    {
+      "text": "满期",
+      "percent": 1
+    },
+    {
+      "text": "达到终点",
+      "percent": 1
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "使终止；使结束；解雇"
+    },
+    {
+      "pos": "adj.",
+      "text": "结束的"
+    },
+    {
+      "pos": "vi.",
+      "text": "结束，终止；结果"
+    }
+  ]
+}

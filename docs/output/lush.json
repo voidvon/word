@@ -1,0 +1,72 @@
+{
+  "word": "lush",
+  "ipa": "[lʌʃ]",
+  "tags": [
+    "TEM8",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 10104,
+    "total": 1494
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 6889,
+      "total": 107537
+    },
+    {
+      "pos": "NOUN",
+      "rank": 34678,
+      "total": 3072
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "茂盛的",
+      "percent": 41
+    },
+    {
+      "text": "酒",
+      "percent": 23
+    },
+    {
+      "text": "苍翠繁茂的",
+      "percent": 14
+    },
+    {
+      "text": "酒鬼",
+      "percent": 11
+    },
+    {
+      "text": "丰富的",
+      "percent": 8
+    },
+    {
+      "text": "喝酒",
+      "percent": 3
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "丰富的，豪华的；苍翠繁茂的"
+    },
+    {
+      "pos": "vi.",
+      "text": "喝酒"
+    },
+    {
+      "pos": "n.",
+      "text": "酒；酒鬼"
+    },
+    {
+      "pos": "vt.",
+      "text": "饮"
+    },
+    {
+      "pos": "n.",
+      "text": "(Lush)人名；(英)勒什"
+    }
+  ]
+}

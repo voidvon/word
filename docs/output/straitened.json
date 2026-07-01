@@ -1,0 +1,31 @@
+{
+  "word": "straitened",
+  "ipa": "[ˈstreɪtnd]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 55953,
+      "total": 494
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "贫困的",
+      "percent": 80
+    },
+    {
+      "text": "动词straiten的过去式和过去分词形式.",
+      "percent": 20
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "经济上拮据的，贫困的"
+    },
+    {
+      "pos": "v.",
+      "text": "使窘迫；限制…的范围（straiten的过去分词）"
+    }
+  ]
+}

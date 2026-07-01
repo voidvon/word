@@ -1,0 +1,23 @@
+{
+  "word": "ethicist",
+  "ipa": "['eθɪsɪst]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 34811,
+      "total": 3035
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "伦理学家",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "伦理学家"
+    }
+  ]
+}

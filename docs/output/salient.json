@@ -1,0 +1,53 @@
+{
+  "word": "salient",
+  "ipa": "[ˈseɪliənt]",
+  "tags": [
+    "CET6",
+    "TEM8",
+    "GRE",
+    "TOEFL"
+  ],
+  "spoken": {
+    "rank": 32789,
+    "total": 221
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 17383,
+      "total": 17658
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "突出的",
+      "percent": 47
+    },
+    {
+      "text": "显著的",
+      "percent": 33
+    },
+    {
+      "text": "跳跃的",
+      "percent": 10
+    },
+    {
+      "text": "突出部分",
+      "percent": 10
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "凸角；突出部分"
+    },
+    {
+      "pos": "adj.",
+      "text": "显著的；突出的；跳跃的"
+    },
+    {
+      "pos": "n.",
+      "text": "(Salient)人名；(西)萨连特"
+    }
+  ]
+}

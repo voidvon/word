@@ -1,0 +1,35 @@
+{
+  "word": "epigenetic",
+  "ipa": "[epɪdʒɪ'netɪk]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 22428,
+      "total": 9830
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "外成的",
+      "percent": 44
+    },
+    {
+      "text": "表观遗传的",
+      "percent": 28
+    },
+    {
+      "text": "后成的",
+      "percent": 14
+    },
+    {
+      "text": "生于地表的",
+      "percent": 14
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "后生的；外成的；渐成说的；表观遗传的"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "word": "midlife",
+  "ipa": "[mɪdˈlaɪf]",
+  "spoken": {
+    "rank": 16939,
+    "total": 646
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 27031,
+      "total": 6175
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "中年的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "中年"
+    }
+  ]
+}

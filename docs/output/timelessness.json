@@ -1,0 +1,23 @@
+{
+  "word": "timelessness",
+  "ipa": "['taɪmləsnəs]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 32209,
+      "total": 3833
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "永恒",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "永恒，不朽；不受时间影响"
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "word": "exhibition",
+  "ipa": "[ˌeksɪˈbɪʃn]",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研",
+    "TOEFL"
+  ],
+  "spoken": {
+    "rank": 4479,
+    "total": 5712,
+    "lemmas": "exhibitions[389]"
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 3011,
+      "total": 397166
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "展览",
+      "percent": 93
+    },
+    {
+      "text": "展示",
+      "percent": 7
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "展览，显示；展览会；展览品"
+    }
+  ]
+}

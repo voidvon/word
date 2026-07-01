@@ -1,0 +1,68 @@
+{
+  "word": "flicker",
+  "ipa": "[ˈflɪkə(r)]",
+  "frm": "flickered, flickering, flickers",
+  "tags": [
+    "CET6",
+    "TEM8",
+    "GRE",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 9230,
+    "total": 1709,
+    "lemmas": "flickering[766] flickers[210]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 16257,
+      "total": 20465
+    },
+    {
+      "pos": "NOUN",
+      "rank": 17972,
+      "total": 16439
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "闪烁",
+      "percent": 72
+    },
+    {
+      "text": "闪光",
+      "percent": 10
+    },
+    {
+      "text": "颤动",
+      "percent": 8
+    },
+    {
+      "text": "闪动",
+      "percent": 7
+    },
+    {
+      "text": "摇动",
+      "percent": 3
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "闪烁；闪光；电影"
+    },
+    {
+      "pos": "vi.",
+      "text": "闪烁；摇曳；颤动；扑动翅膀；假装昏倒"
+    },
+    {
+      "pos": "vt.",
+      "text": "使闪烁；使摇曳"
+    },
+    {
+      "pos": "n.",
+      "text": "(Flicker)人名；(英)弗利克"
+    }
+  ]
+}

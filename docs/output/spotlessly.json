@@ -1,0 +1,23 @@
+{
+  "word": "spotlessly",
+  "ipa": "['spɔtlisli]",
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 37861,
+      "total": 2338
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "纯洁地；一尘不染地",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "纯洁地；一尘不染地"
+    }
+  ]
+}

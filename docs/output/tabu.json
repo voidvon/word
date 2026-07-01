@@ -1,0 +1,43 @@
+{
+  "word": "tabu",
+  "ipa": "[tə'bu:]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 53378,
+      "total": 642
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "禁忌",
+      "percent": 94
+    },
+    {
+      "text": "=taboo.",
+      "percent": 3
+    },
+    {
+      "text": "禁止接近",
+      "percent": 3
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "禁忌"
+    },
+    {
+      "pos": "n.",
+      "text": "(Tabu)人名；(阿拉伯)塔布"
+    },
+    {
+      "pos": "adj.",
+      "text": "禁忌的"
+    },
+    {
+      "pos": "vt.",
+      "text": "禁止（等于taboo）"
+    }
+  ]
+}

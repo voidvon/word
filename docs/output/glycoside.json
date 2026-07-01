@@ -1,0 +1,23 @@
+{
+  "word": "glycoside",
+  "ipa": "['glaɪkəˌsaɪd]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 33415,
+      "total": 3423
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "配糖类",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "配醣；配糖体；配糖类"
+    }
+  ]
+}

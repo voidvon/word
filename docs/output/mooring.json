@@ -1,0 +1,48 @@
+{
+  "word": "mooring",
+  "ipa": "[ˈmɔ:rɪŋ]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 23594,
+      "total": 8675
+    },
+    {
+      "pos": "ADJ",
+      "rank": 33823,
+      "total": 3305
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "停泊处",
+      "percent": 60
+    },
+    {
+      "text": "下锚",
+      "percent": 20
+    },
+    {
+      "text": "系船用具",
+      "percent": 10
+    },
+    {
+      "text": "动词moor的现在分词形式.",
+      "percent": 10
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "下锚；停泊处；系船具"
+    },
+    {
+      "pos": "v.",
+      "text": "停泊（moor的ing形式）"
+    },
+    {
+      "pos": "n.",
+      "text": "(Mooring)人名；(英)穆林"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "word": "oxidative",
+  "ipa": "['ɒksɪdeɪtɪv]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 15012,
+      "total": 24225
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "氧化的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "[化学] 氧化的"
+    }
+  ]
+}

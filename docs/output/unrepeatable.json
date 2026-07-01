@@ -1,0 +1,23 @@
+{
+  "word": "unrepeatable",
+  "ipa": "[ˌʌnrɪˈpi:təbl]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 50573,
+      "total": 839
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "不可重复的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "不可重复的；粗俗下流的"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "word": "schnitzel",
+  "ipa": "['ʃnɪtsəl]",
+  "spoken": {
+    "rank": 19499,
+    "total": 513
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 39727,
+      "total": 2020
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "炸肉排",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "炸肉排"
+    }
+  ]
+}

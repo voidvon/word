@@ -1,0 +1,36 @@
+{
+  "word": "polka",
+  "ipa": "[ˈpɒlkə]",
+  "frm": "polkaed, polkaing, polkas",
+  "spoken": {
+    "rank": 12539,
+    "total": 1047
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 17731,
+      "total": 16917
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "波尔卡舞",
+      "percent": 71
+    },
+    {
+      "text": "跳波尔卡舞",
+      "percent": 29
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "波尔卡舞；女用紧身短上衣"
+    },
+    {
+      "pos": "n.",
+      "text": "(Polka)人名；(捷、塞)波尔卡"
+    }
+  ]
+}

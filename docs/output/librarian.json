@@ -1,0 +1,42 @@
+{
+  "word": "librarian",
+  "ipa": "[laɪˈbreəriən]",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研"
+  ],
+  "spoken": {
+    "rank": 7428,
+    "total": 2446,
+    "lemmas": "librarians[395]"
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 8442,
+      "total": 74349
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "图书管理员",
+      "percent": 84
+    },
+    {
+      "text": "图书馆馆长",
+      "percent": 12
+    },
+    {
+      "text": "图书馆学专家",
+      "percent": 4
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "图书馆员；图书管理员"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "word": "inspiration",
+  "ipa": "[ˌɪnspəˈreɪʃn]",
+  "tags": [
+    "CET4",
+    "CET6",
+    "TEM4",
+    "考研",
+    "GRE",
+    "TOEFL",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 3564,
+    "total": 8304,
+    "lemmas": "inspirations[207]"
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 2635,
+      "total": 487987
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "灵感",
+      "percent": 93
+    },
+    {
+      "text": "吸气",
+      "percent": 7
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "灵感；鼓舞；吸气；妙计"
+    }
+  ]
+}

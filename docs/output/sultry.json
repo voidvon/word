@@ -1,0 +1,47 @@
+{
+  "word": "sultry",
+  "ipa": "[ˈsʌltri]",
+  "tags": [
+    "TEM8",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 20236,
+    "total": 484
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 19831,
+      "total": 13131
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "闷热的",
+      "percent": 64
+    },
+    {
+      "text": "淫荡的",
+      "percent": 11
+    },
+    {
+      "text": "风骚的",
+      "percent": 11
+    },
+    {
+      "text": "激烈的",
+      "percent": 7
+    },
+    {
+      "text": "易怒的",
+      "percent": 7
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "闷热的；狂暴的；淫荡的"
+    }
+  ]
+}

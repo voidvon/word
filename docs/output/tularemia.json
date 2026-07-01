@@ -1,0 +1,23 @@
+{
+  "word": "tularemia",
+  "ipa": "[ˌtu:lə'ri:mɪə]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 49561,
+      "total": 925
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "野兔病",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "[兽医] 兔热病；野兔病"
+    }
+  ]
+}

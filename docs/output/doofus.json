@@ -1,0 +1,31 @@
+{
+  "word": "doofus",
+  "ipa": "[ˈdu:fəs]",
+  "spoken": {
+    "rank": 15084,
+    "total": 777
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 43688,
+      "total": 1471
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "古怪的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "蠢人；笨货"
+    },
+    {
+      "pos": "adj.",
+      "text": "古怪的；愚蠢的"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "word": "stretched",
+  "ipa": "[st'retʃt]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 20618,
+      "total": 12019
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "拉伸的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "v.",
+      "text": "伸直，伸展；舒展（stretch的过去分词）；伸缩"
+    },
+    {
+      "pos": "adj.",
+      "text": "拉伸的，伸展了的"
+    }
+  ]
+}

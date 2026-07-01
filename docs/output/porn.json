@@ -1,0 +1,31 @@
+{
+  "word": "porn",
+  "ipa": "[pɔ:n]",
+  "spoken": {
+    "rank": 2851,
+    "total": 11684
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 7722,
+      "total": 87746
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "=pornography/pornographic",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "色情描写，色情文学；黄色书刊，色情照片（等于pornography）"
+    },
+    {
+      "pos": "n.",
+      "text": "(Porn)人名；(泰、柬)蓬"
+    }
+  ]
+}

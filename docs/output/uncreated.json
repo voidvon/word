@@ -1,0 +1,27 @@
+{
+  "word": "uncreated",
+  "ipa": "[ˌʌnkrɪ'eɪtɪd]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 38397,
+      "total": 2246
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "尚未产生的",
+      "percent": 50
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "尚未产生的；非创造的；未被创造的；自存的；永存的"
+    },
+    {
+      "pos": "v.",
+      "text": "使不存在（uncreate的过去式和过去分词）"
+    }
+  ]
+}

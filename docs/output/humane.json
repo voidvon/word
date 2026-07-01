@@ -1,0 +1,36 @@
+{
+  "word": "humane",
+  "ipa": "[hju:ˈmeɪn]",
+  "tags": [
+    "CET6",
+    "TEM4",
+    "GRE"
+  ],
+  "spoken": {
+    "rank": 9193,
+    "total": 1723
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 8988,
+      "total": 66504
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "人道的",
+      "percent": 68
+    },
+    {
+      "text": "仁慈的",
+      "percent": 32
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "仁慈的，人道的；高尚的"
+    }
+  ]
+}

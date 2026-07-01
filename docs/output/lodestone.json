@@ -1,0 +1,35 @@
+{
+  "word": "lodestone",
+  "ipa": "[ˈləudstəun]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 46311,
+      "total": 1200
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "吸引人的东西",
+      "percent": 40
+    },
+    {
+      "text": "天然磁铁",
+      "percent": 20
+    },
+    {
+      "text": "=loadstone.",
+      "percent": 20
+    },
+    {
+      "text": "极磁铁矿",
+      "percent": 20
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "天然磁石；吸引人的东西（等于loadstone）"
+    }
+  ]
+}

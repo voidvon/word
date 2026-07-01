@@ -1,0 +1,21 @@
+{
+  "word": "standards-based",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 25099,
+      "total": 7421
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "基于标准",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "text": "基于标准"
+    }
+  ]
+}

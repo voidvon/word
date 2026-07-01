@@ -1,0 +1,26 @@
+{
+  "word": "sybaritic",
+  "ipa": "[,sibә'ritik]",
+  "tags": [
+    "GRE"
+  ],
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 59945,
+      "total": 301
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "奢侈享乐的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "奢侈逸乐的；柔弱的"
+    }
+  ]
+}

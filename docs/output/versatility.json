@@ -1,0 +1,35 @@
+{
+  "word": "versatility",
+  "ipa": "[ˌvɜ:sə'tɪlətɪ]",
+  "spoken": {
+    "rank": 33737,
+    "total": 211
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 7110,
+      "total": 101698
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "多功能",
+      "percent": 60
+    },
+    {
+      "text": "多才多艺",
+      "percent": 25
+    },
+    {
+      "text": "多样性",
+      "percent": 15
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "多功能性；多才多艺；用途广泛"
+    }
+  ]
+}

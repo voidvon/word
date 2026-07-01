@@ -1,0 +1,31 @@
+{
+  "word": "unhesitatingly",
+  "ipa": "[ʌn'hezɪteɪtɪŋlɪ]",
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 42590,
+      "total": 1606
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "不踌躇地",
+      "percent": 51
+    },
+    {
+      "text": "迅速地",
+      "percent": 33
+    },
+    {
+      "text": "坚定地",
+      "percent": 16
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "不踌躇地；迅速地"
+    }
+  ]
+}

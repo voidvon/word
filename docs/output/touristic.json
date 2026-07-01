@@ -1,0 +1,35 @@
+{
+  "word": "touristic",
+  "ipa": "[tuəˈristik]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 33573,
+      "total": 3381
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "旅游者",
+      "percent": 70
+    },
+    {
+      "text": "观光的",
+      "percent": 14
+    },
+    {
+      "text": "二等舱",
+      "percent": 12
+    },
+    {
+      "text": "乘坐二等舱的",
+      "percent": 4
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "旅游的；观光客的"
+    }
+  ]
+}

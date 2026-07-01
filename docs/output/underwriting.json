@@ -1,0 +1,31 @@
+{
+  "word": "underwriting",
+  "ipa": "['ʌndəˌraɪtɪŋ]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 12825,
+      "total": 33444
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "承销",
+      "percent": 56
+    },
+    {
+      "text": "保险业",
+      "percent": 44
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "保险业；[金融] 证券包销"
+    },
+    {
+      "pos": "v.",
+      "text": "认购（underwrite的ing形式）；写在…下面；经营保险业"
+    }
+  ]
+}

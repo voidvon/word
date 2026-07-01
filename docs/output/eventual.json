@@ -1,0 +1,35 @@
+{
+  "word": "eventual",
+  "ipa": "[ɪˈventʃuəl]",
+  "tags": [
+    "TEM4",
+    "TOEFL"
+  ],
+  "spoken": {
+    "rank": 18261,
+    "total": 570
+  },
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 8306,
+      "total": 76853
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "最终的",
+      "percent": 86
+    },
+    {
+      "text": "可能的",
+      "percent": 14
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "最后的，结果的；可能的；终于的"
+    }
+  ]
+}

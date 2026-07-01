@@ -1,0 +1,23 @@
+{
+  "word": "progressivity",
+  "ipa": "[prəɡ'res'ɪvɪtɪ]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 56710,
+      "total": 456
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "累进税",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "累进税"
+    }
+  ]
+}

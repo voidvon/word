@@ -1,0 +1,27 @@
+{
+  "word": "cavernous",
+  "ipa": "[ˈkævənəs]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 22607,
+      "total": 9644
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "似巨穴的",
+      "percent": 54
+    },
+    {
+      "text": "多洞穴的",
+      "percent": 46
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "似巨穴的；洞穴状的；凹状的；瓮声的"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "word": "sludge",
+  "ipa": "[slʌdʒ]",
+  "spoken": {
+    "rank": 15805,
+    "total": 722
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 16022,
+      "total": 21064
+    },
+    {
+      "pos": "VERB",
+      "rank": 33859,
+      "total": 3297
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "淤泥",
+      "percent": 67
+    },
+    {
+      "text": "泥状雪",
+      "percent": 20
+    },
+    {
+      "text": "泥泞",
+      "percent": 13
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "烂泥；泥泞；泥状雪；沉淀物；（海上）小浮冰"
+    }
+  ]
+}

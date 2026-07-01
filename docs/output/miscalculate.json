@@ -1,0 +1,40 @@
+{
+  "word": "miscalculate",
+  "ipa": "[ˌmɪsˈkælkjuleɪt]",
+  "frm": "miscalculated, miscalculating, miscalculates",
+  "tags": [
+    "TEM4"
+  ],
+  "spoken": {
+    "rank": 22192,
+    "total": 417,
+    "lemmas": "miscalculated[417]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 34153,
+      "total": 3211
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "误算",
+      "percent": 58
+    },
+    {
+      "text": "误估",
+      "percent": 42
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "算错；估计错误"
+    },
+    {
+      "pos": "vi.",
+      "text": "算错；判断错误"
+    }
+  ]
+}

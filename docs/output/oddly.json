@@ -1,0 +1,34 @@
+{
+  "word": "oddly",
+  "ipa": "[ˈɒdli]",
+  "tags": [
+    "TOEFL"
+  ],
+  "spoken": {
+    "rank": 7469,
+    "total": 2423
+  },
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 9564,
+      "total": 59589
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "奇怪地",
+      "percent": 72
+    },
+    {
+      "text": "奇妙地",
+      "percent": 28
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "古怪地；奇妙地；单数地"
+    }
+  ]
+}

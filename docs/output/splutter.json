@@ -1,0 +1,44 @@
+{
+  "word": "splutter",
+  "ipa": "[ˈsplʌtə(r)]",
+  "frm": "spluttered, spluttering, splutters",
+  "tags": [
+    "TEM8"
+  ],
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 40565,
+      "total": 1894
+    },
+    {
+      "pos": "NOUN",
+      "rank": 61343,
+      "total": 251
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "杂乱的声音",
+      "percent": 67
+    },
+    {
+      "text": "杂乱而仓促的话",
+      "percent": 33
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "劈啪声；急忙说出的话；杂乱的声音"
+    },
+    {
+      "pos": "vt.",
+      "text": "喷溅；气急败坏地说"
+    },
+    {
+      "pos": "vi.",
+      "text": "喷溅唾沫；语无伦次地说"
+    }
+  ]
+}

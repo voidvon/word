@@ -1,0 +1,27 @@
+{
+  "word": "absorptive",
+  "ipa": "[əb'sɔ:ptɪv]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 36900,
+      "total": 2542
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "吸收性的",
+      "percent": 60
+    },
+    {
+      "text": "有吸收力的",
+      "percent": 40
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "吸收性的；有吸收力的"
+    }
+  ]
+}

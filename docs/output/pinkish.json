@@ -1,0 +1,23 @@
+{
+  "word": "pinkish",
+  "ipa": "[ˈpɪŋkɪʃ]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 24651,
+      "total": 7793
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "略带桃色的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "略带桃色的；较为激进的"
+    }
+  ]
+}

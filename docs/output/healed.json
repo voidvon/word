@@ -1,0 +1,34 @@
+{
+  "word": "healed",
+  "ipa": "[hi:ld]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 39534,
+      "total": 2054
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "治愈",
+      "percent": 67
+    },
+    {
+      "text": "痊愈",
+      "percent": 26
+    },
+    {
+      "text": "使和解",
+      "percent": 5
+    },
+    {
+      "text": "使恢复健康",
+      "percent": 2
+    }
+  ],
+  "trans": [
+    {
+      "text": "恢复"
+    }
+  ]
+}

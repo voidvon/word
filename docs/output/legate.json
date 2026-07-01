@@ -1,0 +1,43 @@
+{
+  "word": "legate",
+  "ipa": "[ˈlegət]",
+  "spoken": {
+    "rank": 26672,
+    "total": 309
+  },
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 32767,
+      "total": 3634
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "罗马教皇的使节",
+      "percent": 47
+    },
+    {
+      "text": "特使",
+      "percent": 38
+    },
+    {
+      "text": "地方总督",
+      "percent": 15
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "罗马教皇的使节；使者"
+    },
+    {
+      "pos": "vt.",
+      "text": "当做遗产让与"
+    },
+    {
+      "pos": "n.",
+      "text": "(Legate)人名；(英)莱盖特"
+    }
+  ]
+}

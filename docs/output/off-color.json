@@ -1,0 +1,39 @@
+{
+  "word": "off-color",
+  "ipa": "['ɔ:f'kʌlə]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 46047,
+      "total": 1227
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "下流的",
+      "percent": 30
+    },
+    {
+      "text": "颜色不佳的",
+      "percent": 30
+    },
+    {
+      "text": "脸色不好的",
+      "percent": 20
+    },
+    {
+      "text": "=off-colored.",
+      "percent": 10
+    },
+    {
+      "text": "怀疑的",
+      "percent": 10
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "脸色不好的；颜色不佳的；下流的"
+    }
+  ]
+}

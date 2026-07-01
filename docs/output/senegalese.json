@@ -1,0 +1,40 @@
+{
+  "word": "senegalese",
+  "ipa": "['seni^әli:z]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 36561,
+      "total": 2623
+    },
+    {
+      "pos": "NOUN",
+      "rank": 53932,
+      "total": 608
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "塞内加尔人",
+      "percent": 42
+    },
+    {
+      "text": "塞内加尔的",
+      "percent": 35
+    },
+    {
+      "text": "塞内加尔语",
+      "percent": 23
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "塞内加尔人；塞内加尔语"
+    },
+    {
+      "pos": "adj.",
+      "text": "塞内加尔人的；塞内加尔的"
+    }
+  ]
+}

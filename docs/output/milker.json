@@ -1,0 +1,31 @@
+{
+  "word": "milker",
+  "ipa": "['mɪlkə]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 49391,
+      "total": 941
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "挤奶器",
+      "percent": 36
+    },
+    {
+      "text": "乳牛",
+      "percent": 32
+    },
+    {
+      "text": "挤奶人",
+      "percent": 32
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "乳牛；挤奶人；挤奶器"
+    }
+  ]
+}

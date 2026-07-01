@@ -1,0 +1,27 @@
+{
+  "word": "sodomite",
+  "ipa": "[ˈsɒdəmaɪt]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 35363,
+      "total": 2899
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "鸡奸者",
+      "percent": 84
+    },
+    {
+      "text": "所多玛人",
+      "percent": 16
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "鸡奸者；兽奸者"
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+{
+  "word": "nonpartisan",
+  "ipa": "[nɒn'pa:tɪzæn]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 18476,
+      "total": 15391
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "无党无派的",
+      "percent": 58
+    },
+    {
+      "text": "超乎党派的",
+      "percent": 42
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "无党派的；超党派的"
+    },
+    {
+      "pos": "n.",
+      "text": "无党派的人"
+    }
+  ]
+}

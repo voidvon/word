@@ -1,0 +1,27 @@
+{
+  "word": "cannily",
+  "ipa": "['kænɪlɪ]",
+  "pos_percents": [
+    {
+      "pos": "ADV",
+      "rank": 53639,
+      "total": 626
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "机灵地",
+      "percent": 60
+    },
+    {
+      "text": "用心地",
+      "percent": 40
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adv.",
+      "text": "机灵地；用心地；狡诈地"
+    }
+  ]
+}

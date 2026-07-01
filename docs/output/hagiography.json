@@ -1,0 +1,27 @@
+{
+  "word": "hagiography",
+  "ipa": "[ˌhægiˈɒgrəfi]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 47776,
+      "total": 1074
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "圣徒言行录",
+      "percent": 59
+    },
+    {
+      "text": "圣徒传",
+      "percent": 41
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "圣徒传记；圣徒言行录"
+    }
+  ]
+}

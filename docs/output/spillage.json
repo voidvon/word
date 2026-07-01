@@ -1,0 +1,31 @@
+{
+  "word": "spillage",
+  "ipa": "[ˈspɪlɪdʒ]",
+  "pos_percents": [
+    {
+      "pos": "NOUN",
+      "rank": 24925,
+      "total": 7564
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "溢出",
+      "percent": 50
+    },
+    {
+      "text": "漏",
+      "percent": 46
+    },
+    {
+      "text": "溢出液",
+      "percent": 4
+    }
+  ],
+  "trans": [
+    {
+      "pos": "n.",
+      "text": "溢出；溢出量"
+    }
+  ]
+}

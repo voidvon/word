@@ -1,0 +1,46 @@
+{
+  "word": "allot",
+  "ipa": "[əˈlɒt]",
+  "frm": "allotted, allotting, allots",
+  "tags": [
+    "CET6",
+    "TEM4",
+    "IELTS"
+  ],
+  "spoken": {
+    "rank": 14844,
+    "total": 797,
+    "lemmas": "allotted[564]"
+  },
+  "pos_percents": [
+    {
+      "pos": "VERB",
+      "rank": 14677,
+      "total": 25332
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "分配",
+      "percent": 74
+    },
+    {
+      "text": "拨给",
+      "percent": 14
+    },
+    {
+      "text": "分摊",
+      "percent": 12
+    }
+  ],
+  "trans": [
+    {
+      "pos": "vt.",
+      "text": "分配；拨给；分派"
+    },
+    {
+      "pos": "n.",
+      "text": "(Allot)人名；(英)阿洛特；(西)阿略特；(法)阿洛"
+    }
+  ]
+}

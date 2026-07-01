@@ -1,0 +1,23 @@
+{
+  "word": "criminological",
+  "ipa": "[ˌkrɪmɪnə'lɒdʒɪkl]",
+  "pos_percents": [
+    {
+      "pos": "ADJ",
+      "rank": 44080,
+      "total": 1428
+    }
+  ],
+  "trans_percents": [
+    {
+      "text": "犯罪学的",
+      "percent": 100
+    }
+  ],
+  "trans": [
+    {
+      "pos": "adj.",
+      "text": "犯罪学的"
+    }
+  ]
+}
