@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { Badge, Button, Card, Grid, List, Space } from "antd-mobile";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { computeAiBuckets, getBookReport, isBook } from "../services/wdbook";
 import { createBook, loadUserState } from "../services/userState";
 
 export function WdBookHomePage() {
+  const navigate = useNavigate();
   const [state, setState] = useState(() => loadUserState());
 
   const aiBuckets = useMemo(() => computeAiBuckets(state), [state]);
@@ -76,15 +77,13 @@ export function WdBookHomePage() {
                 key={book.id}
                 clickable
                 arrowIcon
-                onClick={() => void 0}
+                onClick={() => navigate(`/wdbook/${book.id}`)}
                 description={`已掌握 ${report.mastered}`}
                 extra={<Badge content={`${report.total} 词`} />}
               >
-                <Link to={`/wdbook/${book.id}`} className="list-link-cover">
-                  <Space direction="vertical" block>
-                    <span>{book.name}</span>
-                  </Space>
-                </Link>
+                <Space direction="vertical" block>
+                  <span>{book.name}</span>
+                </Space>
               </List.Item>
             );
           })}

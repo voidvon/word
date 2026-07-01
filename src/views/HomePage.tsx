@@ -1,12 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Card, List, Tabs } from "antd-mobile";
+import { Card, List } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
 import { getWords } from "../services/dictionary";
 import { MobileSearchBox } from "../ui/MobileSearchBox";
-import { loadUserState, touchSearchWord } from "../services/userState";
+import { loadUserState } from "../services/userState";
 import type { DictionaryWord } from "../types";
-
-const tabs = ["每日推荐", "单词块", "知识圈"] as const;
 
 type HistoryEntry = {
   word: string;
@@ -15,8 +13,7 @@ type HistoryEntry = {
 
 export function HomePage() {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<(typeof tabs)[number]>("每日推荐");
-  const [state, setState] = useState(() => loadUserState());
+  const [state] = useState(() => loadUserState());
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
 
   const history = useMemo(() => state.searchList.slice(0, 10), [state.searchList]);
@@ -26,8 +23,6 @@ export function HomePage() {
   }, [history]);
 
   function submit(word: string) {
-    const next = touchSearchWord(word);
-    setState(next);
     navigate(`/word?wd=${encodeURIComponent(word)}&l=en`);
   }
 
@@ -35,21 +30,6 @@ export function HomePage() {
     <div className="page-grid">
       <Card className="mobile-card">
         <MobileSearchBox onSubmit={submit} />
-        <Tabs
-          className="mobile-tabs"
-          activeKey={tab}
-          onChange={(key) => {
-            const next = key as (typeof tabs)[number];
-            setTab(next);
-            if (next === "单词块") {
-              navigate("/wdbook");
-            }
-          }}
-        >
-          {tabs.map((item) => (
-            <Tabs.Tab title={item} key={item} />
-          ))}
-        </Tabs>
       </Card>
 
       <Card className="mobile-card" title="搜索历史">

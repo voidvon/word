@@ -132,6 +132,20 @@ input {
   font-size: 13px;
 }
 
+.list-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tag-inline-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .panel__head {
   display: flex;
   align-items: center;

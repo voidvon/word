@@ -4,7 +4,7 @@ type DictionaryWordModule = {
   default: DictionaryWord;
 };
 
-const modules = import.meta.glob<DictionaryWordModule>("../../output/*.json");
+const modules = import.meta.glob<DictionaryWordModule>("../data/dictionary/*.json");
 
 function normalizeWord(word: string) {
   return word.trim().toLowerCase();
@@ -12,7 +12,7 @@ function normalizeWord(word: string) {
 
 export async function getWord(word: string): Promise<DictionaryWord | null> {
   const normalized = normalizeWord(word);
-  const loader = modules[`../../output/${normalized}.json`];
+  const loader = modules[`../data/dictionary/${normalized}.json`];
   if (!loader) {
     return null;
   }

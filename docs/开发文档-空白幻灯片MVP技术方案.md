@@ -16,9 +16,9 @@
 当前仓库没有应用代码，只有两类内容：
 
 1. `空白幻灯片.pptx`
-2. `output/*.json` 单词数据文件
+2. `src/data/dictionary/*.json` 单词数据文件
 
-从抽样文件看，`output/*.json` 已经可以直接作为词典基础数据源，包含字段：
+从抽样文件看，`src/data/dictionary/*.json` 已经可以直接作为词典基础数据源，包含字段：
 
 ```json
 {
@@ -121,7 +121,7 @@ src/
 
 说明：
 
-1. `data/output` 存放现有词典 `json`
+1. `src/data/dictionary` 存放现有词典 `json`
 2. `services/dictionary` 负责词典读取
 3. `services/user-state` 负责 `wordJsonU`、`searchList` 等本地状态
 4. `services/wdbook` 负责单词本计算逻辑
@@ -131,7 +131,7 @@ src/
 
 ## 6.1 词典基础数据
 
-建议直接把 `output/*.json` 抽象成：
+建议直接把 `src/data/dictionary/*.json` 抽象成：
 
 ```ts
 export type DictionaryWord = {
@@ -456,7 +456,7 @@ type DictionaryService = {
 
 MVP 实现方式：
 
-1. 直接按单词名读取 `output/<word>.json`
+1. 直接按单词名读取 `src/data/dictionary/<word>.json`
 2. 查不到则返回 `null`
 
 注意：
@@ -622,7 +622,7 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 1. 第一版将这类逻辑配置化
 2. 不把未确认规则硬编码到核心模型
 
-## 14.2 风险二：`output/*.json` 可能并不完整
+## 14.2 风险二：`src/data/dictionary/*.json` 可能并不完整
 
 当前只能确认它适合做查词页基础展示，不能确认它是否覆盖所有业务词。
 
@@ -648,7 +648,7 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 如果继续往下推进，最合理的顺序是：
 
 1. 先搭一个最小前端工程
-2. 把 `output/*.json` 接成词典服务
+2. 把 `src/data/dictionary/*.json` 接成词典服务
 3. 把这份技术方案落成类型定义和本地状态服务
 4. 先做首页和查词页
 5. 再做单词块首页和单词本详情页
