@@ -1,7 +1,7 @@
 import { Card, List, Tag } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
 
-const recommendations = [
+export const dailyRecommendations = [
   {
     word: "versatility",
     note: "多功能性；适合用来强化名词后缀 -ity 的感知。",
@@ -34,12 +34,12 @@ export function DailyRecommendPage() {
 
       <Card className="mobile-card" title="推荐词单">
         <List>
-          {recommendations.map((item) => (
+          {dailyRecommendations.map((item) => (
             <List.Item
               key={item.word}
               clickable
               description={item.note}
-              onClick={() => navigate(`/word?wd=${encodeURIComponent(item.word)}&l=en`)}
+              onClick={() => navigate(`/?q=${encodeURIComponent(item.word)}`)}
             >
               <div className="list-title-row">
                 <span>{item.word}</span>

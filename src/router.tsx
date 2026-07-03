@@ -4,8 +4,9 @@ import { DailyRecommendPage } from "./views/DailyRecommendPage";
 import { HomePage } from "./views/HomePage";
 import { KnowledgeFeedPage } from "./views/KnowledgeFeedPage";
 import { WdBookHomePage } from "./views/WdBookHomePage";
-import { WordDetailPage } from "./views/WordDetailPage";
 import { WdBookDetailPage } from "./views/WdBookDetailPage";
+import { WdBookWordPage } from "./views/WdBookWordPage";
+import { WordDetailPage } from "./views/WordDetailPage";
 
 export const router = createHashRouter([
   {
@@ -25,12 +26,20 @@ export const router = createHashRouter([
         element: <KnowledgeFeedPage />,
       },
       {
-        path: "word",
+        path: "word/:word",
         element: <WordDetailPage />,
       },
       {
         path: "wdbook",
         element: <WdBookHomePage />,
+      },
+      {
+        path: "wdbook/word/:word",
+        element: <WdBookWordPage />,
+      },
+      {
+        path: "wdbook/ai/:bucketKey",
+        element: <WdBookDetailPage />,
       },
       {
         path: "wdbook/:bookId",

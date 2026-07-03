@@ -1,147 +1,91 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  Button,
-  Card,
-  List,
-  Picker,
-  Selector,
-  Space,
-  Tag,
-  Toast,
-} from "antd-mobile";
-import { useSearchParams } from "react-router-dom";
-import { getWord } from "../services/dictionary";
-import { addWordToStudy, loadUserState, touchSearchWord } from "../services/userState";
+import { LeftOutline, StarOutline } from "antd-mobile-icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { getWord, searchWords } from "../services/dictionary";
+import { addWordToBuiltinBook } from "../services/userState";
 import type { DictionaryWord } from "../types";
 
 export function WordDetailPage() {
-  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { word = "" } = useParams();
+  const decodedWord = decodeURIComponent(word).toLowerCase();
   const [wordData, setWordData] = useState<DictionaryWord | null | undefined>(undefined);
-  const [state, setState] = useState(() => loadUserState());
-  const word = searchParams.get("wd")?.trim().toLowerCase() ?? "";
-  const [selectedBookId, setSelectedBookId] = useState<number[]>([]);
-  const [pickerVisible, setPickerVisible] = useState(false);
 
   useEffect(() => {
-    if (!word) {
-      setWordData(null);
-      return;
+    setWordData(undefined);
+    void getWord(decodedWord).then(setWordData);
+  }, [decodedWord]);
+
+  useEffect(() => {
+    if (wordData) {
+      addWordToBuiltinBook(wordData.word);
     }
+  }, [wordData]);
 
-    const next = touchSearchWord(word);
-    setState(next);
-    void getWord(word).then(setWordData);
-  }, [word]);
-
-  const books = useMemo(
-    () =>
-      state.wordBookList
-        .map((id) => state.wordBookMap[id])
-        .filter((item): item is NonNullable<typeof item> => item !== undefined)
-        .filter((item) => item.kind === "book"),
-    [state],
+  const suggestions = useMemo(
+    () => searchWords(decodedWord.slice(0, Math.max(1, decodedWord.length - 1)), 8)
+      .filter((item) => item.word !== decodedWord)
+      .slice(0, 6),
+    [decodedWord],
   );
 
-  useEffect(() => {
-    if (selectedBookId.length === 0 && books[0]) {
-      setSelectedBookId([books[0].id]);
-    }
-  }, [books, selectedBookId]);
-
   return (
-    <section className="detail-panel">
-      {!word ? <Card className="mobile-card" title="缺少查询词" /> : null}
-      {word && wordData === undefined ? <Card className="mobile-card" title="加载中..." /> : null}
-      {word && wordData === null ? (
-        <Card className="mobile-card" title={word}>
-          本地词典中未找到该词条。
-        </Card>
-      ) : null}
-      {wordData ? (
-        <>
-          <Card className="mobile-card">
-            <div className="detail-hero">
-              <div>
-                <p className="eyebrow">查词详情</p>
-                <h2>{wordData.word}</h2>
-                <p className="detail-ipa">{wordData.ipa ?? "暂无音标"}</p>
-                {wordData.frm ? <p className="detail-frm">{wordData.frm}</p> : null}
-              </div>
-            </div>
-            <Space wrap className="tag-row">
-              {wordData.tags?.slice(0, 6).map((tag) => (
-                <Tag key={tag} color="warning" fill="solid">
-                  {tag}
-                </Tag>
-              ))}
-            </Space>
-          </Card>
+    <article className="word-detail-page">
+      <header className="word-detail-hero">
+        <div className="word-detail-top">
+          <button aria-label="返回" className="word-detail-icon-button" onClick={() => navigate(-1)} type="button">
+            <LeftOutline />
+          </button>
+          <h1>{decodedWord}</h1>
+          <button aria-label="收藏" className="word-detail-icon-button" type="button">
+            <StarOutline />
+          </button>
+        </div>
 
-          <Card className="mobile-card" title="释义">
-            <List>
-              {wordData.trans?.map((item, index) => (
-                <List.Item key={`${item.pos}-${index}`} prefix={<strong>{item.pos}</strong>}>
-                  {item.text}
-                </List.Item>
-              ))}
-            </List>
-          </Card>
+        <div className="word-pronunciation-row">
+          <span>英 {wordData?.ipa ?? "暂无音标"}</span>
+        </div>
 
-          <Card className="mobile-card" title="学习操作">
-            <div>
-              <p>把当前词加入学习流，并同步写入单词本。</p>
-            </div>
-            <Space direction="vertical" block>
-              <Selector
-                columns={2}
-                showCheckMark
-                options={books.map((book) => ({
-                  label: book.name,
-                  value: book.id,
-                }))}
-                value={selectedBookId}
-                onChange={(value) => setSelectedBookId(value.slice(-1))}
-              />
-              <Button
-                color="primary"
-                block
-                disabled={selectedBookId.length === 0}
-                onClick={() => {
-                  const targetBookId = selectedBookId[0];
-                  if (!targetBookId) {
-                    return;
-                  }
-                  setState(addWordToStudy(wordData.word, targetBookId));
-                  Toast.show({
-                    content: `已将 ${wordData.word} 加入学习流`,
-                  });
-                }}
-              >
-                加入学习流
-              </Button>
-              <Button fill="none" onClick={() => setPickerVisible(true)}>
-                用 Picker 选择单词本
-              </Button>
-            </Space>
-            <div className="status-line">
-              当前状态：{state.wordUserMap[wordData.word]?.s ?? "未记录"}，查询次数：
-              {state.wordUserMap[wordData.word]?.sc ?? 0}
-            </div>
-            <Picker
-              visible={pickerVisible}
-              value={selectedBookId}
-              columns={[
-                books.map((book) => ({
-                  label: book.name,
-                  value: book.id,
-                })),
-              ]}
-              onClose={() => setPickerVisible(false)}
-              onConfirm={(value) => setSelectedBookId(value as number[])}
-            />
-          </Card>
-        </>
-      ) : null}
-    </section>
+        {wordData?.tags?.length ? (
+          <div className="word-tag-row">
+            {wordData.tags.slice(0, 4).map((tag) => (
+              <span key={tag}>{tag}</span>
+            ))}
+          </div>
+        ) : null}
+      </header>
+
+      <section className="word-detail-section">
+        <div className="word-translation-list">
+          {wordData === undefined ? <p>加载中...</p> : null}
+          {wordData === null ? <p>本地词典中未找到该词条。</p> : null}
+          {wordData?.trans?.map((item, index) => (
+            <p key={`${item.pos}-${index}`}>
+              <span>{index + 1}.</span> <strong>{item.pos}</strong> {item.text}
+            </p>
+          ))}
+          {wordData?.frm ? (
+            <p className="word-forms"><span>时态:</span> {wordData.frm}</p>
+          ) : null}
+        </div>
+      </section>
+
+      <section className="word-detail-section">
+        <div className="word-suggestions">
+          <h3>您要查找的是不是：</h3>
+          {suggestions.length === 0 ? <p className="word-muted">暂无相近词</p> : null}
+          {suggestions.map((item) => (
+            <button
+              key={item.word}
+              onClick={() => navigate(`/word/${encodeURIComponent(item.word)}`)}
+              type="button"
+            >
+              <strong>{item.word}</strong>
+              <span>{item.trans?.[0] ? `${item.trans[0].pos} ${item.trans[0].text}` : "暂无释义"}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+    </article>
   );
 }

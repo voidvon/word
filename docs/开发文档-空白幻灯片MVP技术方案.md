@@ -4,6 +4,10 @@
 
 这份文档承接 [开发文档-空白幻灯片需求分析.md](/Users/yytest/Documents/projects/word/docs/开发文档-空白幻灯片需求分析.md)，进一步把需求收敛成可执行的 MVP 技术方案。
 
+当前项目不是传统意义上的完整整屏词典 App，而是完整 App 的左侧边栏子应用。完整 App 会分成左右两栏：左栏承载当前词典、搜索、单词块、每日推荐、知识圈等模块，右栏承载用户正在浏览的英文网页或其它页面。
+
+后续右栏网页会通过 App 内置通道读取左栏状态，并把网页内的选词、查词、加入学习、忽略等行为回传到左栏。产品最终还会通过 JS 注入到右侧网页中，实现类似 Relingo 的单词提示，并继续扩展更多网页增强能力。
+
 重点回答 4 个问题：
 
 1. 用什么数据结构实现
@@ -13,10 +17,12 @@
 
 ## 2. 当前仓库现状
 
-当前仓库没有应用代码，只有两类内容：
+当前仓库已经是 Vite + React + TypeScript 前端工程，核心内容包括：
 
-1. `空白幻灯片.pptx`
-2. `src/data/dictionary/*.json` 单词数据文件
+1. `src/views` 页面实现
+2. `src/services` 词典、用户状态、单词本等业务服务
+3. `src/data/dictionary/*.json` 单词数据文件
+4. `docs/空白幻灯片.pptx` 与配套需求/技术文档
 
 从抽样文件看，`src/data/dictionary/*.json` 已经可以直接作为词典基础数据源，包含字段：
 
@@ -57,16 +63,17 @@
 
 ## 3. 技术边界
 
-由于仓库里没有现成前端工程，当前技术方案只定义实现方向，不强绑定框架。
-
-但为了后续开发效率，建议默认采用：
+当前工程采用：
 
 1. React
 2. TypeScript
 3. 本地 JSON 文件作为词典数据源
 4. LocalStorage 或 IndexedDB 作为用户状态存储
+5. 前端路由承载左侧边栏中的独立模块
 
-如果后面你准备搭 Next.js、Vite React 或 Taro/uni-app，我可以再据此输出对应的项目脚手架方案。
+当前 MVP 的实现边界是左侧边栏。右侧网页容器、真实 WebView/浏览器壳、JS 注入脚本和跨栏桥接层可以先定义接口边界，不在首版完整实现。
+
+后续如果 App 外壳明确为桌面端、移动端 WebView 或浏览器扩展，需要在桥接层适配对应运行时。
 
 ## 4. MVP 功能范围
 
@@ -79,28 +86,33 @@
 5. 单词本详情页单词网格
 6. 用户本地状态维护
 7. 两种排序切换
+8. 底部导航承载首页、每日推荐、单词块、知识圈
+9. 为右侧网页读取和回传数据预留服务接口
 
 第一版不实现：
 
-1. 底部导航真实交互
-2. 顶部黑色统计模块真实数据
-3. OCR 导入
-4. 单词册
-5. 左上角完整功能菜单
-6. 常查单词与忽略单词完整页面
+1. 顶部黑色统计模块真实数据
+2. OCR 导入
+3. 单词册
+4. 左上角完整功能菜单
+5. 常查单词与忽略单词完整页面
+6. 右侧网页容器
+7. 生产级跨栏通信桥接
+8. JS 注入脚本、网页内高亮、释义浮层等类 Relingo 能力
 
 ## 5. 推荐目录结构
 
-如果新建前端工程，建议结构如下：
+当前前端工程建议按以下结构继续演进：
 
 ```text
 src/
-  app/
-    routes/
-      index/
-      word-detail/
-      wdbook-home/
-      wdbook-detail/
+  views/
+    HomePage.tsx
+    WordDetailPage.tsx
+    WdBookHomePage.tsx
+    WdBookDetailPage.tsx
+    DailyRecommendPage.tsx
+    KnowledgeFeedPage.tsx
   components/
     search/
     history/
@@ -108,11 +120,13 @@ src/
     wdbook/
     common/
   data/
-    output/
-  services/
     dictionary/
-    user-state/
-    wdbook/
+  services/
+    dictionary.ts
+    userState.ts
+    wdbook.ts
+    bridge.ts
+    injection.ts
   store/
   types/
   utils/
@@ -126,6 +140,8 @@ src/
 3. `services/user-state` 负责 `wordJsonU`、`searchList` 等本地状态
 4. `services/wdbook` 负责单词本计算逻辑
 5. `types` 统一类型定义
+6. `services/bridge` 后续负责左栏与右侧网页之间的数据读取和行为回传
+7. `services/injection` 后续负责注入脚本需要的词典查询、状态映射和提示数据组装
 
 ## 6. 数据模型设计
 
@@ -373,7 +389,6 @@ HomePage
     SearchInput
     VoiceButton
     CameraButton
-  HomeTabs
   SearchHistoryPanel
     SearchHistoryItem
 ```
@@ -381,8 +396,8 @@ HomePage
 组件职责：
 
 1. `SearchHeader` 负责输入、聚焦状态、搜索提交
-2. `HomeTabs` 负责展示 3 个 Tab
-3. `SearchHistoryPanel` 负责渲染历史记录
+2. `SearchHistoryPanel` 负责渲染历史记录
+3. 每日推荐、单词块、知识圈通过全局底部导航进入独立页面，不放在首页搜索框下方
 
 ## 8.2 查词详情页
 
@@ -494,6 +509,55 @@ type WordBookService = {
 }
 ```
 
+## 9.4 跨栏桥接服务
+
+跨栏桥接服务用于隔离左侧边栏状态和右侧网页环境。MVP 阶段可以先复用 LocalStorage 和普通函数，后续根据 App 外壳替换成 WebView bridge、postMessage、扩展 runtime message 或其它宿主能力。
+
+建议接口：
+
+```ts
+type SidebarBridgeService = {
+  getWordForPage(word: string): Promise<DictionaryWord | null>
+  getWordUserState(word: string): WordUserState | null
+  reportLookupFromPage(word: string, source: "hover" | "select" | "manual"): AppUserData
+  reportWordActionFromPage(word: string, action: "add" | "ignore" | "master"): AppUserData
+  subscribeStateChange(listener: (next: AppUserData) => void): () => void
+}
+```
+
+设计约束：
+
+1. 右侧网页不能直接读写任意左侧内部状态，只通过桥接服务访问有限能力
+2. 写入类行为必须复用 `userState` 服务，避免出现两套状态更新规则
+3. 桥接层要保留来源字段，后续区分左栏手动查词和网页注入触发的查词
+4. 右侧网页刷新提示时应订阅状态变更，而不是反复全量扫描左栏数据
+
+## 9.5 注入服务
+
+注入服务面向右侧网页里的 JS 脚本，负责把词典和用户状态转换成网页可消费的数据。
+
+建议首版只定义纯数据能力：
+
+```ts
+type InjectionService = {
+  shouldAnnotateWord(word: string): Promise<boolean>
+  getAnnotation(word: string): Promise<{
+    word: string
+    shortTranslation: string
+    state: WordUserState | null
+    status: "new" | "learning" | "ignored" | "mastered"
+  } | null>
+}
+```
+
+后续网页注入脚本再基于这层能力实现：
+
+1. 网页正文单词识别
+2. 单词高亮或下划线
+3. 悬停/点击释义浮层
+4. 加入学习、忽略、标记掌握等快捷动作
+5. 与左栏页面的状态同步
+
 ## 10. 计算逻辑设计
 
 ## 10.1 AI 单词本分类计算
@@ -568,11 +632,14 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 2. `/word?wd=<word>&l=en`
 3. `/wdbook`
 4. `/wdbook/:bookId`
+5. `/daily`
+6. `/knowledge`
 
 说明：
 
 1. PPT 里 `wdBook` 同时指首页模块和详情模块，真实实现不要共用同一路由
 2. 否则页面职责会混乱
+3. 每日推荐和知识圈是底部导航里的独立模块，不作为首页内嵌 Tab
 
 ## 13. MVP 开发任务拆分
 
@@ -606,6 +673,8 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 2. 完善单词颜色映射
 3. 接入更多页面交互
 4. 预留同步与 OCR 扩展点
+5. 定义左栏与右侧网页之间的桥接服务
+6. 定义注入脚本所需的单词提示数据结构
 
 ## 14. 风险与注意事项
 
@@ -643,17 +712,34 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 1. 工程里分开命名
 2. 路由和组件都不要沿用这个混合语义
 
+## 14.4 风险四：跨栏运行时尚未确定
+
+当前只知道右侧网页会通过 App 内置通道读取左栏数据并回传行为，但宿主形态还没有明确。
+
+可能的运行时包括：
+
+1. WebView bridge
+2. iframe / postMessage
+3. 浏览器扩展 runtime message
+4. 宿主 App 自定义 JS API
+
+处理方式：
+
+1. 左栏业务服务先保持纯函数和本地状态接口
+2. 把跨栏能力集中在 `bridge` 服务中
+3. 注入脚本只依赖 `bridge` 暴露的有限接口，不直接耦合 React 页面
+
 ## 15. 下一步建议
 
 如果继续往下推进，最合理的顺序是：
 
-1. 先搭一个最小前端工程
-2. 把 `src/data/dictionary/*.json` 接成词典服务
-3. 把这份技术方案落成类型定义和本地状态服务
-4. 先做首页和查词页
-5. 再做单词块首页和单词本详情页
+1. 补齐未完成的单词本管理能力：重命名、删除、详情页搜索
+2. 让每日推荐优先使用 `src/data/dictionary/*.json` 中的真实词库数据
+3. 把“常查”和“忽略”分类落成真实统计和页面入口
+4. 抽出 `bridge` 服务，先用本地函数模拟右侧网页读取和回传
+5. 再定义注入脚本的数据协议，为类 Relingo 的提示能力做准备
 
 如果你要继续，我下一步可以直接开始做两种事情中的一种：
 
-1. 生成项目脚手架和基础代码
-2. 继续补一份“接口与类型定义文档”，把所有 TS 类型和服务方法列全
+1. 继续补单词本管理功能
+2. 先做 `bridge` / `injection` 的接口和本地模拟实现

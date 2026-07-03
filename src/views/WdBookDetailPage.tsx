@@ -1,8 +1,13 @@
+import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
-import { ActionSheet, Button, Card, Selector, Toast } from "antd-mobile";
-import { useParams } from "react-router-dom";
-import { loadUserState, setWordStatus } from "../services/userState";
-import { getBookWords, isBook } from "../services/wdbook";
+import { Button, NavBar } from "antd-mobile";
+import { useNavigate, useParams } from "react-router-dom";
+import { loadUserState } from "../services/userState";
+import { computeAiBuckets, getAiBucketWords, getBookWords, isBook } from "../services/wdbook";
+
+type WordTileStyle = CSSProperties & {
+  "--word-tile-font-size": string;
+};
 
 function getTileTone(status?: "a" | "b" | "c" | "d") {
   if (status === "b") {
@@ -17,112 +22,79 @@ function getTileTone(status?: "a" | "b" | "c" | "d") {
   return "tile-orange";
 }
 
+function getTileFontSize(word: string) {
+  const safeLength = Math.max(word.length, 1);
+  const fittedSize = Math.floor(80 / (safeLength * 0.48));
+  return Math.max(7, Math.min(14, fittedSize));
+}
+
 export function WdBookDetailPage() {
-  const { bookId } = useParams();
-  const [sortMode, setSortMode] = useState<"add" | "alpha">("add");
-  const [state, setState] = useState(() => loadUserState());
-  const [activeWord, setActiveWord] = useState<string | null>(null);
-  const [actionVisible, setActionVisible] = useState(false);
+  const navigate = useNavigate();
+  const { bookId, bucketKey } = useParams();
+  const [state] = useState(() => loadUserState());
   const entity = state.wordBookMap[Number(bookId)];
   const book = entity && isBook(entity) ? entity : null;
+  const aiBucket = useMemo(
+    () => computeAiBuckets(state).find((bucket) => bucket.key === bucketKey),
+    [bucketKey, state],
+  );
+  const pageTitle = aiBucket?.title.replace(/^[^\u4e00-\u9fa5A-Za-z]+\s*/, "") ?? book?.name ?? "单词块列表";
 
   const words = useMemo(() => {
+    if (bucketKey) {
+      return getAiBucketWords(state, bucketKey);
+    }
     if (!book) {
       return [];
     }
-    return getBookWords(book, sortMode);
-  }, [book, sortMode]);
+    return getBookWords(book, "add");
+  }, [book, bucketKey, state]);
 
-  if (!book) {
+  if (!book && !aiBucket) {
     return (
-      <section className="panel">
-        <h2>单词本不存在</h2>
+      <section className="word-block-list-page">
+        <NavBar className="word-block-navbar" onBack={() => navigate(-1)}>
+          单词块列表
+        </NavBar>
+        <div className="word-block-list-empty">入口不存在</div>
       </section>
     );
   }
 
   return (
-    <section className="detail-panel">
-      <Card className="mobile-card">
-        <div>
-          <p className="eyebrow">单词本详情</p>
-          <h2>{book.name}</h2>
-        </div>
-        <Selector
-          className="sort-selector"
-          columns={2}
-          showCheckMark
-          options={[
-            { label: "按添加顺序", value: "add" },
-            { label: "按字母顺序", value: "alpha" },
-          ]}
-          value={[sortMode]}
-          onChange={(value) => {
-            const next = value[0];
-            if (next === "add" || next === "alpha") {
-              setSortMode(next);
-            }
-          }}
-        />
-      </Card>
+    <section className="word-block-list-page">
+      <NavBar className="word-block-navbar" onBack={() => navigate(-1)}>
+        {pageTitle}
+      </NavBar>
 
-      <Card className="mobile-card">
+      <div className={`word-block-list-body${book ? " is-book-list" : ""}`}>
         <div className="word-grid">
-        {words.map((word) => (
-          <Button
-            key={word}
-            block
-            fill="solid"
-            size="small"
-            className={`word-tile ${getTileTone(state.wordUserMap[word]?.s)} ${
-              activeWord === word ? "is-selected" : ""
-            }`}
-            onClick={() => {
-              setActiveWord(word);
-              setActionVisible(true);
-            }}
-          >
-            {word}
-          </Button>
-        ))}
+          {words.map((word, index) => (
+            <Button
+              key={word}
+              block
+              fill="solid"
+              size="small"
+              className={`word-tile ${getTileTone(state.wordUserMap[word]?.s)}`}
+              style={{ "--word-tile-font-size": `${getTileFontSize(word)}px` } as WordTileStyle}
+              onClick={() =>
+                navigate(`/wdbook/word/${encodeURIComponent(word)}`, {
+                  state: {
+                    index,
+                    words,
+                  },
+                })
+              }
+            >
+              {word}
+            </Button>
+          ))}
         </div>
-      </Card>
 
-      <ActionSheet
-        visible={actionVisible}
-        onClose={() => setActionVisible(false)}
-        extra={activeWord ? `当前单词：${activeWord}` : "单词操作"}
-        actions={[
-          {
-            text: "标记为学习中",
-            key: "a",
-          },
-          {
-            text: "标记为忽略",
-            key: "b",
-          },
-          {
-            text: "标记为砍掉",
-            key: "c",
-          },
-          {
-            text: "标记为已背会",
-            key: "d",
-          },
-        ]}
-        cancelText="取消"
-        onAction={(action) => {
-          if (!activeWord) {
-            return;
-          }
-          const next = setWordStatus(activeWord, action.key as "a" | "b" | "c" | "d");
-          setState(next);
-          setActionVisible(false);
-          Toast.show({
-            content: `已更新 ${activeWord} 的状态`,
-          });
-        }}
-      />
+        <div className="word-block-list-count">
+          {words.length === 0 ? "暂无单词" : `${words.length} 个单词`}
+        </div>
+      </div>
     </section>
   );
 }

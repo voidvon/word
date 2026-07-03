@@ -39,7 +39,7 @@ export function KnowledgeFeedPage() {
               key={item.title}
               clickable
               description={item.text}
-              onClick={() => navigate(`/word?wd=${encodeURIComponent(item.word)}&l=en`)}
+              onClick={() => navigate(`/?q=${encodeURIComponent(item.word)}`)}
             >
               <div className="list-title-row">
                 <span>{item.title}</span>

@@ -39,6 +39,7 @@ export type WordBook = {
   id: number;
   kind: "book";
   name: string;
+  color?: string;
   report: {
     total: number;
     mastered: number;
@@ -78,5 +79,5 @@ export type AiBucket = {
   key: string;
   title: string;
   count: number;
-  tone: "orange" | "blue" | "green" | "gray" | "red" | "purple";
+  tone: "orange" | "blue" | "green" | "gray" | "red" | "purple" | "teal" | "black";
 };

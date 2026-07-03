@@ -1,10 +1,9 @@
 import type { DictionaryWord } from "../types";
 
-type DictionaryWordModule = {
-  default: DictionaryWord;
-};
-
-const modules = import.meta.glob<DictionaryWordModule>("../data/dictionary/*.json");
+const eagerModules = import.meta.glob<DictionaryWord>("../data/dictionary/*.json", {
+  eager: true,
+  import: "default",
+});
 
 function normalizeWord(word: string) {
   return word.trim().toLowerCase();
@@ -12,12 +11,7 @@ function normalizeWord(word: string) {
 
 export async function getWord(word: string): Promise<DictionaryWord | null> {
   const normalized = normalizeWord(word);
-  const loader = modules[`../data/dictionary/${normalized}.json`];
-  if (!loader) {
-    return null;
-  }
-  const mod = await loader();
-  return mod.default;
+  return eagerModules[`../data/dictionary/${normalized}.json`] ?? null;
 }
 
 export async function getWords(words: string[]) {
@@ -28,4 +22,43 @@ export async function getWords(words: string[]) {
     })),
   );
   return items;
+}
+
+function getSearchText(item: DictionaryWord) {
+  return [
+    item.word,
+    item.ipa,
+    item.frm,
+    item.tags?.join(" "),
+    item.trans?.map((trans) => `${trans.pos} ${trans.text}`).join(" "),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+}
+
+export function searchWords(query: string, limit = 20) {
+  const normalized = normalizeWord(query);
+  if (!normalized) {
+    return [];
+  }
+
+  const words = Object.values(eagerModules);
+  const startsWithMatches: DictionaryWord[] = [];
+  const includesMatches: DictionaryWord[] = [];
+
+  for (const item of words) {
+    const word = item.word.toLowerCase();
+    if (word.startsWith(normalized)) {
+      startsWithMatches.push(item);
+      continue;
+    }
+    if (getSearchText(item).includes(normalized)) {
+      includesMatches.push(item);
+    }
+  }
+
+  return [...startsWithMatches, ...includesMatches]
+    .sort((left, right) => left.word.localeCompare(right.word))
+    .slice(0, limit);
 }
