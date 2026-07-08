@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
+import { Toast } from "antd-mobile";
 import { LeftOutline, StarOutline } from "antd-mobile-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { getWord, searchWords } from "../services/dictionary";
-import { addWordToBuiltinBook } from "../services/userState";
+import { addWordToBuiltinBook, loadUserState, toggleWordFocus } from "../services/userState";
 import type { DictionaryWord } from "../types";
 
 export function WordDetailPage() {
@@ -10,6 +11,8 @@ export function WordDetailPage() {
   const { word = "" } = useParams();
   const decodedWord = decodeURIComponent(word).toLowerCase();
   const [wordData, setWordData] = useState<DictionaryWord | null | undefined>(undefined);
+  const [userState, setUserState] = useState(() => loadUserState());
+  const isFavorited = userState.wordUserMap[decodedWord]?.focused ?? false;
 
   useEffect(() => {
     setWordData(undefined);
@@ -18,9 +21,15 @@ export function WordDetailPage() {
 
   useEffect(() => {
     if (wordData) {
-      addWordToBuiltinBook(wordData.word);
+      setUserState(addWordToBuiltinBook(wordData.word));
     }
   }, [wordData]);
+
+  function toggleFavorite() {
+    const next = toggleWordFocus(decodedWord);
+    setUserState(next);
+    Toast.show({ content: next.wordUserMap[decodedWord]?.focused ? "已收藏" : "已取消收藏" });
+  }
 
   const suggestions = useMemo(
     () => searchWords(decodedWord.slice(0, Math.max(1, decodedWord.length - 1)), 8)
@@ -37,7 +46,12 @@ export function WordDetailPage() {
             <LeftOutline />
           </button>
           <h1>{decodedWord}</h1>
-          <button aria-label="收藏" className="word-detail-icon-button" type="button">
+          <button
+            aria-label={isFavorited ? "取消收藏" : "收藏"}
+            className={`word-detail-icon-button${isFavorited ? " is-active" : ""}`}
+            onClick={toggleFavorite}
+            type="button"
+          >
             <StarOutline />
           </button>
         </div>

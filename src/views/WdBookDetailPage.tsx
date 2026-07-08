@@ -1,9 +1,12 @@
 import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import { Button, NavBar } from "antd-mobile";
+import { FilterOutline } from "antd-mobile-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { loadUserState } from "../services/userState";
 import { computeAiBuckets, getAiBucketWords, getBookWords, isBook } from "../services/wdbook";
+
+type SortMode = "add" | "alpha";
 
 type WordTileStyle = CSSProperties & {
   "--word-tile-font-size": string;
@@ -32,6 +35,7 @@ export function WdBookDetailPage() {
   const navigate = useNavigate();
   const { bookId, bucketKey } = useParams();
   const [state] = useState(() => loadUserState());
+  const [sortMode, setSortMode] = useState<SortMode>("add");
   const entity = state.wordBookMap[Number(bookId)];
   const book = entity && isBook(entity) ? entity : null;
   const aiBucket = useMemo(
@@ -42,13 +46,20 @@ export function WdBookDetailPage() {
 
   const words = useMemo(() => {
     if (bucketKey) {
-      return getAiBucketWords(state, bucketKey);
+      const bucketWords = getAiBucketWords(state, bucketKey);
+      return sortMode === "alpha"
+        ? [...bucketWords].sort((left, right) => left.localeCompare(right))
+        : bucketWords;
     }
     if (!book) {
       return [];
     }
-    return getBookWords(book, "add");
-  }, [book, bucketKey, state]);
+    return getBookWords(book, sortMode);
+  }, [book, bucketKey, sortMode, state]);
+
+  function toggleSortMode() {
+    setSortMode((current) => (current === "add" ? "alpha" : "add"));
+  }
 
   if (!book && !aiBucket) {
     return (
@@ -63,7 +74,21 @@ export function WdBookDetailPage() {
 
   return (
     <section className="word-block-list-page">
-      <NavBar className="word-block-navbar" onBack={() => navigate(-1)}>
+      <NavBar
+        className="word-block-navbar"
+        onBack={() => navigate(-1)}
+        right={
+          <button
+            aria-label={`切换排序，当前为${sortMode === "add" ? "添加顺序" : "字母顺序"}`}
+            className="word-block-sort-button"
+            onClick={toggleSortMode}
+            type="button"
+          >
+            <FilterOutline />
+            <span>{sortMode === "add" ? "添加" : "A-Z"}</span>
+          </button>
+        }
+      >
         {pageTitle}
       </NavBar>
 

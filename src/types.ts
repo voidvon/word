@@ -29,8 +29,15 @@ export type WordUserState = {
   s: WordStateType;
   a?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
   sc: number;
+  reviewCount: number;
+  createdAt: number;
+  lastReviewedAt?: number;
   t: number;
   l: number[];
+  fuzzyCount: number;
+  wrongCount: number;
+  focused: boolean;
+  ignoredAt?: number;
 };
 
 export type WordUserStateMap = Record<string, WordUserState>;
@@ -68,6 +75,11 @@ export type AppUserData = {
   wordUserMap: WordUserStateMap;
   wordBookList: number[];
   wordBookMap: Record<number, WordBookEntity>;
+  aiBucketPrefs: Record<string, {
+    enabled: boolean;
+    order: number;
+    updatedAt: number;
+  }>;
   updateList: Array<{
     type: string;
     payload: unknown;
@@ -75,9 +87,34 @@ export type AppUserData = {
   }>;
 };
 
+export type AiBucketTone = "orange" | "blue" | "green" | "gray" | "red" | "purple" | "teal" | "black";
+export type AiBucketRuleType = "local-rule" | "ai-generated" | "remote";
+export type AiBucketKey =
+  | "due"
+  | "new"
+  | "hard"
+  | "unknown"
+  | "focus"
+  | "mastered"
+  | "frequent"
+  | "ignored";
+
+export type AiBucketDefinition = {
+  key: AiBucketKey;
+  title: string;
+  tone: AiBucketTone;
+  description?: string;
+  enabled: boolean;
+  order: number;
+  ruleType: AiBucketRuleType;
+};
+
 export type AiBucket = {
-  key: string;
+  key: AiBucketKey;
   title: string;
   count: number;
-  tone: "orange" | "blue" | "green" | "gray" | "red" | "purple" | "teal" | "black";
+  tone: AiBucketTone;
+  description?: string;
+  order: number;
+  ruleType: AiBucketRuleType;
 };

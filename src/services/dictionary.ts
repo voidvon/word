@@ -24,6 +24,10 @@ export async function getWords(words: string[]) {
   return items;
 }
 
+export function getDictionaryWords() {
+  return Object.values(eagerModules).sort((left, right) => left.word.localeCompare(right.word));
+}
+
 function getSearchText(item: DictionaryWord) {
   return [
     item.word,

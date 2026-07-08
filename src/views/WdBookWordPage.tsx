@@ -3,7 +3,7 @@ import { Button, NavBar, Toast } from "antd-mobile";
 import { LeftOutline, RightOutline } from "antd-mobile-icons";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getWord } from "../services/dictionary";
-import { loadUserState, setWordStatus } from "../services/userState";
+import { loadUserState, setWordStatus, toggleWordFocus } from "../services/userState";
 import type { DictionaryWord, WordStateType } from "../types";
 
 const statusText: Record<WordStateType, string> = {
@@ -52,11 +52,25 @@ export function WdBookWordPage() {
     const next = setWordStatus(decodedWord, status);
     setUserState(next);
     Toast.show({
-      content: status === "d" ? "已标记为认识" : status === "a" ? "已标记为模糊" : "已标记为忘记",
+      content:
+        status === "d"
+          ? "已标记为认识"
+          : status === "a"
+            ? "已标记为模糊"
+            : status === "b"
+              ? "已忽略"
+              : "已标记为忘记",
     });
     if (shouldGoNext) {
       goNextWord();
     }
+  }
+
+  function toggleFocus() {
+    const next = toggleWordFocus(decodedWord);
+    setUserState(next);
+    const isFocused = next.wordUserMap[decodedWord]?.focused ?? false;
+    Toast.show({ content: isFocused ? "已加入重点关注" : "已取消重点关注" });
   }
 
   function goNextWord() {
@@ -98,7 +112,7 @@ export function WdBookWordPage() {
       <section className="wdbook-word-actions">
         <button className="wdbook-progress-card" type="button">
           <strong>{wordState?.a ?? 0}%</strong>
-          <span>累计学习 {wordState?.sc ?? 0} 次</span>
+          <span>累计学习 {wordState?.reviewCount ?? 0} 次</span>
           <RightOutline />
         </button>
         <button
@@ -108,8 +122,17 @@ export function WdBookWordPage() {
         >
           <span>词典</span>
         </button>
-        <button className="wdbook-action-card" onClick={() => updateStatus("a")} type="button">
+        <button className="wdbook-action-card" type="button">
           <span>{statusText[wordState?.s ?? "a"]}</span>
+        </button>
+      </section>
+
+      <section className="wdbook-word-secondary-actions">
+        <button className={wordState?.focused ? "is-active" : ""} onClick={toggleFocus} type="button">
+          {wordState?.focused ? "已重点关注" : "重点关注"}
+        </button>
+        <button className={wordState?.s === "b" ? "is-active" : ""} onClick={() => updateStatus("b")} type="button">
+          忽略
         </button>
       </section>
 
@@ -128,7 +151,7 @@ export function WdBookWordPage() {
         role={isAnswerVisible ? undefined : "button"}
         tabIndex={isAnswerVisible ? undefined : 0}
       >
-        <div className="wdbook-answer-badge">{wordState?.sc ?? 0}</div>
+        <div className="wdbook-answer-badge">{wordState?.reviewCount ?? 0}</div>
         {isAnswerVisible ? (
           <div className="wdbook-answer-content">
             {wordData === undefined ? <p>加载中...</p> : null}

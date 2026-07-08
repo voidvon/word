@@ -1,17 +1,20 @@
 import { useMemo, useState } from "react";
-import { ActionSheet, Card, Dialog, Input, Toast } from "antd-mobile";
+import { ActionSheet, Card, Dialog, Input, List, NavBar, Popup, Toast } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
+import { getDictionaryWords } from "../services/dictionary";
 import { computeAiBuckets, getBookReport, isBook } from "../services/wdbook";
 import {
-  BUILTIN_BOOK_ID,
   createBook,
   deleteBook,
+  importWordToBook,
   loadUserState,
   renameBook,
 } from "../services/userState";
 import type { WordBook } from "../types";
 
 const fallbackBookColors = ["#2f80ed", "#27ae60", "#f2994a", "#eb5757", "#9b51e0", "#00a6a6"];
+const defaultImportWordColor = "#2f80ed";
+const importWordColors = [defaultImportWordColor, "#27ae60", "#f2994a", "#eb5757", "#9b51e0", "#00a6a6", "#34495e", "#df6d3c"];
 
 export function WdBookHomePage() {
   const navigate = useNavigate();
@@ -22,11 +25,13 @@ export function WdBookHomePage() {
   const [newBookName, setNewBookName] = useState("");
   const [renameVisible, setRenameVisible] = useState(false);
   const [renameBookName, setRenameBookName] = useState("");
+  const [importVisible, setImportVisible] = useState(false);
 
   const aiBuckets = useMemo(
     () => computeAiBuckets(state),
     [state],
   );
+  const dictionaryWords = useMemo(() => getDictionaryWords(), []);
   const books = useMemo(
     () =>
       state.wordBookList
@@ -57,25 +62,21 @@ export function WdBookHomePage() {
     setActiveBook(null);
   }
 
+  function importWord(word: string, color: string) {
+    if (!activeBook) {
+      return;
+    }
+    const nextState = importWordToBook(activeBook.id, word, color);
+    const nextActiveBook = nextState.wordBookMap[activeBook.id];
+    setState(nextState);
+    if (nextActiveBook && isBook(nextActiveBook)) {
+      setActiveBook(nextActiveBook);
+    }
+    Toast.show({ content: "添加成功" });
+  }
+
   return (
     <div className="page-grid">
-      <Card className="mobile-card hero-mobile-card">
-        <div className="hero-stats hero-stats-mobile">
-          <Card>
-            <span>总词汇量</span>
-            <strong>{Object.keys(state.wordUserMap).length}</strong>
-          </Card>
-          <Card>
-            <span>搜索历史</span>
-            <strong>{state.searchList.length}</strong>
-          </Card>
-          <Card>
-            <span>待复习</span>
-            <strong>{state.studyList.length}</strong>
-          </Card>
-        </div>
-      </Card>
-
       <Card className="mobile-card ai-wordbook-card">
         <h2 className="ai-wordbook-title">AI 单词本</h2>
         <div className="ai-bucket-grid">
@@ -114,20 +115,18 @@ export function WdBookHomePage() {
               >
                 <strong>{book.name}</strong>
                 <span>{report.total} 词</span>
-                {book.id !== BUILTIN_BOOK_ID ? (
-                  <button
-                    aria-label={`${book.name} 更多操作`}
-                    className="my-wordbook-more"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setActiveBook(book);
-                      setActionVisible(true);
-                    }}
-                    type="button"
-                  >
-                    ...
-                  </button>
-                ) : null}
+                <button
+                  aria-label={`${book.name} 更多操作`}
+                  className="my-wordbook-more"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setActiveBook(book);
+                    setActionVisible(true);
+                  }}
+                  type="button"
+                >
+                  ...
+                </button>
               </div>
             );
           })}
@@ -147,6 +146,10 @@ export function WdBookHomePage() {
       <ActionSheet
         actions={[
           {
+            key: "import",
+            text: "从词库导入单词",
+          },
+          {
             key: "rename",
             text: "重命名",
           },
@@ -160,6 +163,11 @@ export function WdBookHomePage() {
         extra={activeBook ? activeBook.name : "单词本操作"}
         onAction={(action) => {
           if (!activeBook) {
+            return;
+          }
+          if (action.key === "import") {
+            setActionVisible(false);
+            setImportVisible(true);
             return;
           }
           if (action.key === "rename") {
@@ -178,10 +186,50 @@ export function WdBookHomePage() {
         }}
         onClose={() => {
           setActionVisible(false);
-          setActiveBook(null);
         }}
         visible={actionVisible}
       />
+
+      <Popup
+        bodyClassName="word-import-popup"
+        destroyOnClose
+        onClose={() => {
+          setImportVisible(false);
+          setActiveBook(null);
+        }}
+        position="right"
+        visible={importVisible}
+      >
+        <div className="word-import-page">
+          <NavBar
+            className="word-import-navbar"
+            onBack={() => {
+              setImportVisible(false);
+              setActiveBook(null);
+            }}
+          >
+            从词库导入单词
+          </NavBar>
+          <List className="word-import-list">
+            {dictionaryWords.map((item, index) => {
+              const color = importWordColors[index % importWordColors.length] ?? defaultImportWordColor;
+              const isImported = activeBook?.wordsByAdd.includes(item.word) ?? false;
+              return (
+                <List.Item
+                  arrow={false}
+                  className={isImported ? "is-imported" : undefined}
+                  extra={isImported ? <span className="word-import-added">已添加</span> : null}
+                  key={item.word}
+                  onClick={() => importWord(item.word, color)}
+                  prefix={<span className="word-import-color" style={{ background: color }} />}
+                >
+                  <span className="word-import-word">{item.word}</span>
+                </List.Item>
+              );
+            })}
+          </List>
+        </div>
+      </Popup>
 
       <Dialog
         actions={[

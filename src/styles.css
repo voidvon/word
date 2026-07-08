@@ -365,6 +365,10 @@ input {
   padding: 0;
 }
 
+.word-detail-icon-button.is-active {
+  color: #f5a400;
+}
+
 .word-pronunciation-row {
   display: flex;
   gap: 16px;
@@ -900,6 +904,64 @@ input {
   --color: #22262a;
 }
 
+.word-import-popup {
+  width: 100vw;
+  height: 100vh;
+  background: #f6f8fb;
+}
+
+.word-import-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #f6f8fb;
+}
+
+.word-import-navbar {
+  flex: 0 0 auto;
+  background: white;
+  color: #22262a;
+  font-weight: 800;
+}
+
+.word-import-list {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 8px 0 18px;
+}
+
+.word-import-list :where(.adm-list-body) {
+  border: 0;
+  background: transparent;
+}
+
+.word-import-list :where(.adm-list-item) {
+  background: white;
+}
+
+.word-import-list :where(.adm-list-item.is-imported) {
+  background: rgba(47, 128, 237, 0.08);
+}
+
+.word-import-color {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+}
+
+.word-import-word {
+  color: #22262a;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.word-import-added {
+  color: var(--dictionary-blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .bucket-card,
 .book-card {
   display: grid;
@@ -972,6 +1034,26 @@ input {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
   gap: 4px;
+}
+
+.word-block-sort-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-width: 52px;
+  height: 30px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(120, 144, 157, 0.14);
+  color: #26313c;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0 8px;
+}
+
+.word-block-sort-button svg {
+  width: 16px;
+  height: 16px;
 }
 
 .word-tile {
@@ -1124,6 +1206,29 @@ input {
   padding: 10px;
   font-size: 20px;
   font-weight: 900;
+}
+
+.wdbook-word-secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 14px 14px;
+}
+
+.wdbook-word-secondary-actions button {
+  min-height: 36px;
+  border: 1px solid rgba(42, 49, 56, 0.08);
+  border-radius: 12px;
+  background: white;
+  color: #69737d;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.wdbook-word-secondary-actions button.is-active {
+  border-color: rgba(47, 128, 237, 0.28);
+  background: rgba(47, 128, 237, 0.1);
+  color: #2f80ed;
 }
 
 .wdbook-answer-card {

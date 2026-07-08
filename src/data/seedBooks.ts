@@ -21,5 +21,6 @@ export const seedUserData: AppUserData = {
       updatedAt: now,
     },
   },
+  aiBucketPrefs: {},
   updateList: [],
 };

@@ -1,5 +1,6 @@
 import { STORAGE_KEY } from "../constants";
 import { seedUserData } from "../data/seedBooks";
+import { normalizeAiBucketPrefs } from "./wdbook";
 import type { AppUserData, WordBook, WordStateType, WordUserState } from "../types";
 
 export const BUILTIN_BOOK_ID = 0;
@@ -66,6 +67,7 @@ function cloneState(state: AppUserData): AppUserData {
     wordUserMap: { ...state.wordUserMap },
     wordBookList: [...state.wordBookList],
     wordBookMap: { ...state.wordBookMap },
+    aiBucketPrefs: { ...(state.aiBucketPrefs ?? {}) },
     updateList: [...state.updateList],
   };
 }
@@ -77,12 +79,20 @@ function normalizeWord(word: string) {
 function ensureWordState(state: AppUserData, word: string) {
   const normalized = normalizeWord(word);
   const prev = state.wordUserMap[normalized];
+  const now = Date.now();
   const nextWordState: WordUserState = {
     s: prev?.s ?? "a",
     a: prev?.a ?? 0,
     sc: prev?.sc ?? 0,
-    t: prev?.t ?? Date.now(),
+    reviewCount: prev?.reviewCount ?? 0,
+    createdAt: prev?.createdAt ?? prev?.t ?? now,
+    lastReviewedAt: prev?.lastReviewedAt,
+    t: prev?.t ?? now,
     l: prev?.l ?? [],
+    fuzzyCount: prev?.fuzzyCount ?? 0,
+    wrongCount: prev?.wrongCount ?? 0,
+    focused: prev?.focused ?? Boolean((prev as WordUserState & { favorited?: boolean })?.favorited),
+    ignoredAt: prev?.ignoredAt,
   };
   state.wordUserMap[normalized] = nextWordState;
   return nextWordState;
@@ -100,7 +110,7 @@ function recomputeBookReport(state: AppUserData, bookId: number) {
 
   const mastered = entity.wordsByAdd.filter((word) => {
     const status = state.wordUserMap[word]?.s;
-    return status === "c" || status === "d";
+    return status === "d";
   }).length;
 
   state.wordBookMap[bookId] = {
@@ -125,9 +135,16 @@ function pushUpdate(state: AppUserData, type: string, payload: unknown) {
 function ensureBuiltinBook(state: AppUserData) {
   const entity = state.wordBookMap[BUILTIN_BOOK_ID];
   const isValidBuiltin = entity && isBookEntity(entity);
-  const shouldMove = state.wordBookList[0] !== BUILTIN_BOOK_ID;
 
-  if (isValidBuiltin && entity.name === BUILTIN_BOOK_NAME && shouldMove === false) {
+  if (isValidBuiltin) {
+    return state;
+  }
+
+  const wasDeleted = state.updateList.some((item) => {
+    const payload = item.payload as { bookId?: unknown };
+    return item.type === "delete-book" && payload.bookId === BUILTIN_BOOK_ID;
+  });
+  if (wasDeleted) {
     return state;
   }
 
@@ -137,17 +154,14 @@ function ensureBuiltinBook(state: AppUserData) {
     id: BUILTIN_BOOK_ID,
     kind: "book",
     name: BUILTIN_BOOK_NAME,
-    color: isValidBuiltin ? entity.color : "#2f80ed",
-    report: isValidBuiltin ? entity.report : { total: 0, mastered: 0 },
-    wordsByAdd: isValidBuiltin ? [...entity.wordsByAdd] : [],
-    wordsByAlpha: isValidBuiltin ? [...entity.wordsByAlpha] : [],
-    createdAt: isValidBuiltin ? entity.createdAt : now,
-    updatedAt: isValidBuiltin ? entity.updatedAt : now,
+    color: "#2f80ed",
+    report: { total: 0, mastered: 0 },
+    wordsByAdd: [],
+    wordsByAlpha: [],
+    createdAt: now,
+    updatedAt: now,
   };
-  next.wordBookList = [
-    BUILTIN_BOOK_ID,
-    ...next.wordBookList.filter((id) => id !== BUILTIN_BOOK_ID),
-  ];
+  next.wordBookList = [BUILTIN_BOOK_ID, ...next.wordBookList.filter((id) => id !== BUILTIN_BOOK_ID)];
   recomputeBookReport(next, BUILTIN_BOOK_ID);
   return next;
 }
@@ -227,8 +241,20 @@ function removeLegacySeedBooks(state: AppUserData) {
   return next;
 }
 
+function normalizeWordUserMap(state: AppUserData) {
+  const next = cloneState(state);
+  Object.keys(next.wordUserMap).forEach((word) => {
+    ensureWordState(next, word);
+  });
+  return next;
+}
+
 function migrateUserState(state: AppUserData) {
-  return removeLegacySeedSearchHistory(removeLegacySeedBooks(ensureBuiltinBook(state)));
+  const next = normalizeWordUserMap(removeLegacySeedSearchHistory(removeLegacySeedBooks(ensureBuiltinBook(state))));
+  return {
+    ...next,
+    aiBucketPrefs: normalizeAiBucketPrefs(next),
+  };
 }
 
 const BOOK_COLORS = [
@@ -266,11 +292,7 @@ export function createBook(name: string) {
 
   const next: AppUserData = {
     ...state,
-    wordBookList: [
-      BUILTIN_BOOK_ID,
-      nextId,
-      ...state.wordBookList.filter((id) => id !== BUILTIN_BOOK_ID),
-    ],
+    wordBookList: [...state.wordBookList, nextId],
     wordBookMap: {
       ...state.wordBookMap,
       [nextId]: {
@@ -295,10 +317,6 @@ export function createBook(name: string) {
 }
 
 export function deleteBook(bookId: number) {
-  if (bookId === BUILTIN_BOOK_ID) {
-    return loadUserState();
-  }
-
   const base = loadUserState();
   const next = cloneState(base);
   const entity = next.wordBookMap[bookId];
@@ -319,10 +337,6 @@ export function deleteBook(bookId: number) {
 }
 
 export function renameBook(bookId: number, name: string) {
-  if (bookId === BUILTIN_BOOK_ID) {
-    return loadUserState();
-  }
-
   const base = loadUserState();
   const next = cloneState(base);
   const entity = next.wordBookMap[bookId];
@@ -375,6 +389,25 @@ export function addWordToBook(bookId: number, word: string) {
   return next;
 }
 
+export function importWordToBook(bookId: number, word: string, color: string) {
+  const next = addWordToBook(bookId, word);
+  const entity = next.wordBookMap[bookId];
+
+  if (!entity || !isBookEntity(entity)) {
+    return next;
+  }
+
+  const updated = cloneState(next);
+  updated.wordBookMap[bookId] = {
+    ...entity,
+    color,
+    updatedAt: Date.now(),
+  };
+  pushUpdate(updated, "update-book-color", { bookId, color });
+  saveUserState(updated);
+  return updated;
+}
+
 export function addWordToBuiltinBook(word: string) {
   return addWordToBook(BUILTIN_BOOK_ID, word);
 }
@@ -401,10 +434,22 @@ export function setWordStatus(word: string, status: WordStateType) {
 
   wordState.s = status;
   wordState.t = Date.now();
+  wordState.lastReviewedAt = wordState.t;
+  wordState.reviewCount += 1;
   if (status === "a") {
     wordState.a = 0;
+    wordState.fuzzyCount += 1;
+    wordState.ignoredAt = undefined;
+    next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
+  } else if (status === "b") {
+    wordState.ignoredAt = Date.now();
+    next.studyList = next.studyList.filter((item) => item !== normalized);
+  } else if (status === "c") {
+    wordState.wrongCount += 1;
+    wordState.ignoredAt = undefined;
     next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
   } else {
+    wordState.ignoredAt = undefined;
     next.studyList = next.studyList.filter((item) => item !== normalized);
   }
 
@@ -413,6 +458,19 @@ export function setWordStatus(word: string, status: WordStateType) {
   }
 
   pushUpdate(next, "set-word-status", { word: normalized, status });
+  saveUserState(next);
+  return next;
+}
+
+export function toggleWordFocus(word: string) {
+  const base = loadUserState();
+  const next = cloneState(base);
+  const normalized = normalizeWord(word);
+  const wordState = ensureWordState(next, normalized);
+
+  wordState.focused = !wordState.focused;
+  wordState.t = Date.now();
+  pushUpdate(next, "toggle-word-focus", { word: normalized, focused: wordState.focused });
   saveUserState(next);
   return next;
 }
