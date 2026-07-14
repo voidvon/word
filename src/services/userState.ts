@@ -61,6 +61,16 @@ export function saveUserState(next: AppUserData) {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 }
 
+export function clearUserState() {
+  if (canUseStorage()) {
+    window.localStorage.removeItem(STORAGE_KEY);
+  }
+
+  const next = migrateUserState(seedUserData);
+  saveUserState(next);
+  return next;
+}
+
 function cloneState(state: AppUserData): AppUserData {
   return {
     ...state,

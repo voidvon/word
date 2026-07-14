@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
+import { Dialog, NavBar, Popup, SafeArea, Toast } from "antd-mobile";
+import { DeleteOutline, UnorderedListOutline } from "antd-mobile-icons";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getWords, searchWords } from "../services/dictionary";
 import { MobileSearchBox } from "../ui/MobileSearchBox";
-import { loadUserState, touchSearchWord } from "../services/userState";
+import { clearUserState, loadUserState, touchSearchWord } from "../services/userState";
 import type { DictionaryWord } from "../types";
 
 type HistoryEntry = {
@@ -16,6 +18,8 @@ export function HomePage() {
   const [state, setState] = useState(() => loadUserState());
   const [query, setQuery] = useState(() => searchParams.get("q") ?? "");
   const [historyEntries, setHistoryEntries] = useState<HistoryEntry[]>([]);
+  const [settingsVisible, setSettingsVisible] = useState(false);
+  const [clearCacheConfirmVisible, setClearCacheConfirmVisible] = useState(false);
 
   const history = useMemo(() => state.searchList.slice(0, 10), [state.searchList]);
   const normalizedQuery = query.trim().toLowerCase();
@@ -46,13 +50,86 @@ export function HomePage() {
     navigate(`/word/${encodeURIComponent(word)}`);
   }
 
+  function clearCache() {
+    const next = clearUserState();
+    setState(next);
+    setHistoryEntries([]);
+    setQuery("");
+    setSearchParams({}, { replace: true });
+    setSettingsVisible(false);
+    setClearCacheConfirmVisible(false);
+    Toast.show({ content: "缓存已清空" });
+  }
+
   return (
     <div className="dictionary-home">
       <header className="home-sticky-head">
         <section className="home-search-section" aria-label="查词">
-          <MobileSearchBox value={query} onChange={updateQuery} onSubmit={submit} />
+          <div className="home-search-row">
+            <MobileSearchBox value={query} onChange={updateQuery} onSubmit={submit} />
+            <button
+              aria-label="打开设置"
+              className="home-settings-trigger"
+              onClick={() => setSettingsVisible(true)}
+              type="button"
+            >
+              <UnorderedListOutline />
+            </button>
+          </div>
         </section>
       </header>
+
+      <Popup
+        bodyClassName="home-settings-drawer"
+        closeOnMaskClick
+        destroyOnClose
+        onClose={() => setSettingsVisible(false)}
+        position="right"
+        visible={settingsVisible}
+      >
+        <aside className="home-settings-panel" aria-label="设置">
+          <SafeArea position="top" />
+          <NavBar className="home-settings-navbar" onBack={() => setSettingsVisible(false)}>
+            设置
+          </NavBar>
+          <div className="home-settings-content">
+            <button className="home-clear-cache-button" onClick={() => setClearCacheConfirmVisible(true)} type="button">
+              <DeleteOutline />
+              <span>清空缓存</span>
+            </button>
+          </div>
+          <SafeArea position="bottom" />
+        </aside>
+      </Popup>
+
+      <Dialog
+        actions={[
+          [
+            {
+              key: "cancel",
+              text: "取消",
+            },
+            {
+              key: "confirm",
+              text: "清空",
+              bold: true,
+            },
+          ],
+        ]}
+        closeOnAction={false}
+        content="将删除搜索历史、单词本和学习记录，且无法恢复。"
+        onAction={(action) => {
+          if (action.key === "cancel") {
+            setClearCacheConfirmVisible(false);
+            return;
+          }
+          clearCache();
+        }}
+        onClose={() => setClearCacheConfirmVisible(false)}
+        style={{ "--z-index": "1200" }}
+        title="清空缓存"
+        visible={clearCacheConfirmVisible}
+      />
 
       {normalizedQuery ? (
         <section className="search-results" aria-label="搜索结果">
