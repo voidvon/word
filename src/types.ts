@@ -24,6 +24,7 @@ export type DictionaryWord = {
 };
 
 export type WordStateType = "a" | "b" | "c" | "d";
+export type WordReviewAction = "known" | "fuzzy" | "forgotten" | "cut" | "ignored";
 
 export type WordUserState = {
   s: WordStateType;

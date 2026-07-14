@@ -1,12 +1,14 @@
-import { STORAGE_KEY } from "../constants";
+import { REVIEW_STAGE_DELAYS, STORAGE_KEY } from "../constants";
 import { seedUserData } from "../data/seedBooks";
 import { normalizeAiBucketPrefs } from "./wdbook";
-import type { AppUserData, WordBook, WordStateType, WordUserState } from "../types";
+import type { AppUserData, WordBook, WordReviewAction, WordUserState } from "../types";
 
 export const BUILTIN_BOOK_ID = 0;
 export const BUILTIN_BOOK_NAME = "我的单词本";
 const LEGACY_SEED_SEARCH_WORDS = ["seek", "evidence", "refund", "deactivate", "special"];
 const LEGACY_SEED_WORDS = ["terminate", "legate", "salient", "appall", "succeed", "evidence", "refund"];
+const MAX_REVIEW_STAGE = 7;
+type ReviewStage = NonNullable<WordUserState["a"]>;
 const LEGACY_SEED_BOOKS: Record<number, { name: string; wordsByAdd: string[] }> = {
   1: {
     name: "斯克林",
@@ -76,6 +78,14 @@ function normalizeWord(word: string) {
   return word.trim().toLowerCase();
 }
 
+function normalizeReviewStage(stage: WordUserState["a"]): ReviewStage {
+  return Math.max(0, Math.min(MAX_REVIEW_STAGE, stage ?? 0)) as ReviewStage;
+}
+
+function getNextReviewTime(stage: ReviewStage, now: number) {
+  return now + (REVIEW_STAGE_DELAYS[stage] ?? 0);
+}
+
 function ensureWordState(state: AppUserData, word: string) {
   const normalized = normalizeWord(word);
   const prev = state.wordUserMap[normalized];
@@ -110,7 +120,7 @@ function recomputeBookReport(state: AppUserData, bookId: number) {
 
   const mastered = entity.wordsByAdd.filter((word) => {
     const status = state.wordUserMap[word]?.s;
-    return status === "d";
+    return status === "c" || status === "d";
   }).length;
 
   state.wordBookMap[bookId] = {
@@ -468,29 +478,53 @@ export function addWordToStudy(word: string, bookId?: number) {
   return next;
 }
 
-export function setWordStatus(word: string, status: WordStateType) {
+export function applyWordReviewAction(word: string, action: WordReviewAction) {
   const base = loadUserState();
   const next = cloneState(base);
   const normalized = normalizeWord(word);
   const wordState = ensureWordState(next, normalized);
+  const now = Date.now();
+  const currentStage = normalizeReviewStage(wordState.a);
 
-  wordState.s = status;
-  wordState.t = Date.now();
-  wordState.lastReviewedAt = wordState.t;
+  wordState.lastReviewedAt = now;
   wordState.reviewCount += 1;
-  if (status === "a") {
-    wordState.a = 0;
+  if (action === "known") {
+    if (currentStage >= MAX_REVIEW_STAGE) {
+      wordState.s = "d";
+      wordState.a = MAX_REVIEW_STAGE;
+      wordState.t = now;
+      next.studyList = next.studyList.filter((item) => item !== normalized);
+    } else {
+      const nextStage = (currentStage + 1) as ReviewStage;
+      wordState.s = "a";
+      wordState.a = nextStage;
+      wordState.t = getNextReviewTime(nextStage, now);
+      next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
+    }
+    wordState.ignoredAt = undefined;
+  } else if (action === "fuzzy") {
+    wordState.s = "a";
+    wordState.a = currentStage;
+    wordState.t = getNextReviewTime(currentStage, now);
     wordState.fuzzyCount += 1;
     wordState.ignoredAt = undefined;
     next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
-  } else if (status === "b") {
-    wordState.ignoredAt = Date.now();
-    next.studyList = next.studyList.filter((item) => item !== normalized);
-  } else if (status === "c") {
+  } else if (action === "forgotten") {
+    const previousStage = Math.max(0, currentStage - 1) as ReviewStage;
+    wordState.s = "a";
+    wordState.a = previousStage;
+    wordState.t = getNextReviewTime(previousStage, now);
     wordState.wrongCount += 1;
     wordState.ignoredAt = undefined;
     next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
+  } else if (action === "ignored") {
+    wordState.s = "b";
+    wordState.t = now;
+    wordState.ignoredAt = now;
+    next.studyList = next.studyList.filter((item) => item !== normalized);
   } else {
+    wordState.s = "c";
+    wordState.t = now;
     wordState.ignoredAt = undefined;
     next.studyList = next.studyList.filter((item) => item !== normalized);
   }
@@ -499,7 +533,13 @@ export function setWordStatus(word: string, status: WordStateType) {
     recomputeBookReport(next, bookId);
   }
 
-  pushUpdate(next, "set-word-status", { word: normalized, status });
+  pushUpdate(next, "set-word-status", {
+    word: normalized,
+    status: wordState.s,
+    stage: wordState.a,
+    nextReviewAt: wordState.t,
+    action,
+  });
   saveUserState(next);
   return next;
 }

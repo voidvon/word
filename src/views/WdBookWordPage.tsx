@@ -3,13 +3,13 @@ import { Button, NavBar, Toast } from "antd-mobile";
 import { LeftOutline, RightOutline } from "antd-mobile-icons";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getWord } from "../services/dictionary";
-import { loadUserState, setWordStatus, toggleWordFocus } from "../services/userState";
-import type { DictionaryWord, WordStateType } from "../types";
+import { applyWordReviewAction, loadUserState, toggleWordFocus } from "../services/userState";
+import type { DictionaryWord, WordReviewAction, WordStateType } from "../types";
 
 const statusText: Record<WordStateType, string> = {
   a: "学习中",
   b: "已忽略",
-  c: "不认识",
+  c: "已砍掉",
   d: "已认识",
 };
 
@@ -48,19 +48,24 @@ export function WdBookWordPage() {
     return `${first.pos} ${first.text}`;
   }, [wordData]);
 
-  function updateStatus(status: WordStateType, shouldGoNext = false) {
-    const next = setWordStatus(decodedWord, status);
+  function applyReviewAction(action: WordReviewAction, shouldGoNext = false) {
+    const next = applyWordReviewAction(decodedWord, action);
     setUserState(next);
-    Toast.show({
-      content:
-        status === "d"
-          ? "已标记为认识"
-          : status === "a"
-            ? "已标记为模糊"
-            : status === "b"
-              ? "已忽略"
-              : "已标记为忘记",
-    });
+    const updatedWordState = next.wordUserMap[decodedWord];
+    const stage = updatedWordState?.a ?? 0;
+    const feedback =
+      action === "known"
+        ? updatedWordState?.s === "d"
+          ? "已完成第 7 级背诵"
+          : `已进入第 ${stage} 级`
+        : action === "fuzzy"
+          ? `保持在第 ${stage} 级`
+          : action === "forgotten"
+            ? `已退回第 ${stage} 级`
+            : action === "cut"
+              ? "已砍掉"
+              : "已忽略";
+    Toast.show({ content: feedback });
     if (shouldGoNext) {
       goNextWord();
     }
@@ -111,7 +116,7 @@ export function WdBookWordPage() {
 
       <section className="wdbook-word-actions">
         <button className="wdbook-progress-card" type="button">
-          <strong>{wordState?.a ?? 0}%</strong>
+          <strong>第 {wordState?.a ?? 0} 级</strong>
           <span>累计学习 {wordState?.reviewCount ?? 0} 次</span>
           <RightOutline />
         </button>
@@ -130,9 +135,6 @@ export function WdBookWordPage() {
       <section className="wdbook-word-secondary-actions">
         <button className={wordState?.focused ? "is-active" : ""} onClick={toggleFocus} type="button">
           {wordState?.focused ? "已重点关注" : "重点关注"}
-        </button>
-        <button className={wordState?.s === "b" ? "is-active" : ""} onClick={() => updateStatus("b")} type="button">
-          忽略
         </button>
       </section>
 
@@ -172,14 +174,20 @@ export function WdBookWordPage() {
 
       {isAnswerVisible ? (
         <footer className="wdbook-review-bar">
-          <Button block color="success" onClick={() => updateStatus("d", true)}>
+          <Button block color="success" onClick={() => applyReviewAction("known", true)}>
             认识
           </Button>
-          <Button block color="warning" onClick={() => updateStatus("a", true)}>
+          <Button block color="warning" onClick={() => applyReviewAction("fuzzy", true)}>
             模糊
           </Button>
-          <Button block color="danger" onClick={() => updateStatus("c", true)}>
+          <Button block color="danger" onClick={() => applyReviewAction("forgotten", true)}>
             忘记
+          </Button>
+          <Button block color="primary" onClick={() => applyReviewAction("cut", true)}>
+            砍
+          </Button>
+          <Button block fill="outline" onClick={() => applyReviewAction("ignored", true)}>
+            忽略
           </Button>
         </footer>
       ) : null}

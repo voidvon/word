@@ -7,7 +7,7 @@ export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
     key: "due",
     title: "⏰ 遗忘中单词",
     tone: "purple",
-    description: "已明确标记为忘记的单词",
+    description: "已到下次复习时间的学习中单词",
     enabled: true,
     order: 10,
     ruleType: "local-rule",
@@ -109,7 +109,7 @@ export function normalizeAiBucketPrefs(state: AppUserData): AppUserData["aiBucke
 
 function matchesAiBucket(bucketKey: AiBucketKey, value: WordUserState, now: number) {
   if (bucketKey === "due") {
-    return value.s === "c";
+    return value.s === "a" && value.t <= now;
   }
   if (bucketKey === "new") {
     return value.s === "a" && now - value.createdAt < ONE_DAY;
@@ -118,13 +118,13 @@ function matchesAiBucket(bucketKey: AiBucketKey, value: WordUserState, now: numb
     return value.fuzzyCount + value.wrongCount >= 2;
   }
   if (bucketKey === "unknown") {
-    return value.s === "c" && value.wrongCount === 1;
+    return value.s === "a" && value.wrongCount === 1;
   }
   if (bucketKey === "focus") {
     return value.focused;
   }
   if (bucketKey === "mastered") {
-    return value.s === "d";
+    return value.s === "c";
   }
   if (bucketKey === "frequent") {
     return value.sc >= 3;
@@ -182,7 +182,7 @@ export function getBookReport(state: AppUserData, book: WordBook) {
   const total = book.wordsByAdd.length;
   const mastered = book.wordsByAdd.filter((word) => {
     const status = state.wordUserMap[word]?.s;
-    return status === "d";
+    return status === "c" || status === "d";
   }).length;
 
   return {
