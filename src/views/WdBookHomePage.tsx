@@ -1,9 +1,10 @@
 import { useMemo, useState } from "react";
-import { ActionSheet, Card, Dialog, Input, List, NavBar, Popup, Toast } from "antd-mobile";
+import { ActionSheet, Card, Dialog, Input, List, NavBar, Popup, TextArea, Toast } from "antd-mobile";
 import { useNavigate } from "react-router-dom";
 import { getDictionaryWords } from "../services/dictionary";
 import { computeAiBuckets, getBookReport, isBook } from "../services/wdbook";
 import {
+  addWordsToBook,
   createBook,
   deleteBook,
   importWordToBook,
@@ -26,6 +27,9 @@ export function WdBookHomePage() {
   const [renameVisible, setRenameVisible] = useState(false);
   const [renameBookName, setRenameBookName] = useState("");
   const [importVisible, setImportVisible] = useState(false);
+  const [batchImportVisible, setBatchImportVisible] = useState(false);
+  const [batchImportText, setBatchImportText] = useState("");
+  const [showBatchImportAfterActionClose, setShowBatchImportAfterActionClose] = useState(false);
 
   const aiBuckets = useMemo(
     () => computeAiBuckets(state),
@@ -73,6 +77,42 @@ export function WdBookHomePage() {
       setActiveBook(nextActiveBook);
     }
     Toast.show({ content: "添加成功" });
+  }
+
+  function confirmBatchImport() {
+    if (!activeBook) {
+      return;
+    }
+
+    const words = Array.from(
+      new Set(
+        batchImportText
+          .split(/\r?\n/)
+          .map((word) => word.trim().toLowerCase())
+          .filter(Boolean),
+      ),
+    );
+    if (words.length === 0) {
+      Toast.show({ content: "请输入至少一个单词" });
+      return;
+    }
+
+    const existingWords = new Set(activeBook.wordsByAdd);
+    const addedCount = words.filter((word) => !existingWords.has(word)).length;
+    const nextState = addWordsToBook(activeBook.id, words);
+    setState(nextState);
+    setBatchImportVisible(false);
+    setBatchImportText("");
+    setActiveBook(null);
+    Toast.show({
+      content: addedCount > 0 ? `已导入 ${addedCount} 个单词` : "这些单词已在当前单词本中",
+    });
+  }
+
+  function closeBatchImport() {
+    setBatchImportVisible(false);
+    setBatchImportText("");
+    setActiveBook(null);
   }
 
   return (
@@ -146,6 +186,10 @@ export function WdBookHomePage() {
       <ActionSheet
         actions={[
           {
+            key: "batch-import",
+            text: "批量导入单词",
+          },
+          {
             key: "import",
             text: "从词库导入单词",
           },
@@ -159,10 +203,22 @@ export function WdBookHomePage() {
             danger: true,
           },
         ]}
+        afterClose={() => {
+          if (showBatchImportAfterActionClose) {
+            setShowBatchImportAfterActionClose(false);
+            setBatchImportVisible(true);
+          }
+        }}
         cancelText="取消"
         extra={activeBook ? activeBook.name : "单词本操作"}
         onAction={(action) => {
           if (!activeBook) {
+            return;
+          }
+          if (action.key === "batch-import") {
+            setBatchImportText("");
+            setShowBatchImportAfterActionClose(true);
+            setActionVisible(false);
             return;
           }
           if (action.key === "import") {
@@ -228,6 +284,46 @@ export function WdBookHomePage() {
               );
             })}
           </List>
+        </div>
+      </Popup>
+
+      <Popup
+        bodyClassName="batch-import-popup"
+        destroyOnClose
+        onClose={closeBatchImport}
+        position="right"
+        visible={batchImportVisible}
+      >
+        <div className="batch-import-page">
+          <NavBar
+            className="batch-import-navbar"
+            onBack={closeBatchImport}
+            right={
+              <button
+                className="batch-import-submit"
+                disabled={!batchImportText.trim()}
+                onClick={confirmBatchImport}
+                type="button"
+              >
+                导入
+              </button>
+            }
+          >
+            批量导入单词
+          </NavBar>
+          <div className="batch-import-editor">
+            <label className="visually-hidden" htmlFor="batch-import-words">
+              批量导入单词，每行一个
+            </label>
+            <TextArea
+              autoFocus
+              id="batch-import-words"
+              maxLength={10000}
+              onChange={setBatchImportText}
+              placeholder={"apple\nbanana\norange"}
+              value={batchImportText}
+            />
+          </div>
         </div>
       </Popup>
 

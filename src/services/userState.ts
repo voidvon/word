@@ -389,6 +389,48 @@ export function addWordToBook(bookId: number, word: string) {
   return next;
 }
 
+export function addWordsToBook(bookId: number, words: string[]) {
+  const base = loadUserState();
+  const next = cloneState(base);
+  const entity = next.wordBookMap[bookId];
+
+  if (!entity || !isBookEntity(entity)) {
+    return next;
+  }
+
+  const normalizedWords = Array.from(
+    new Set(words.map(normalizeWord).filter(Boolean)),
+  );
+  if (normalizedWords.length === 0) {
+    return next;
+  }
+
+  const existingWords = new Set(entity.wordsByAdd);
+  const addedWords = normalizedWords.filter((word) => !existingWords.has(word));
+
+  normalizedWords.forEach((word) => {
+    const wordState = ensureWordState(next, word);
+    if (!wordState.l.includes(bookId)) {
+      wordState.l = [...wordState.l, bookId];
+    }
+  });
+
+  if (addedWords.length > 0) {
+    const wordsByAdd = [...addedWords, ...entity.wordsByAdd];
+    next.wordBookMap[bookId] = {
+      ...entity,
+      wordsByAdd,
+      wordsByAlpha: [...wordsByAdd].sort((left, right) => left.localeCompare(right)),
+      updatedAt: Date.now(),
+    };
+    recomputeBookReport(next, bookId);
+    pushUpdate(next, "add-words-to-book", { bookId, words: addedWords });
+    saveUserState(next);
+  }
+
+  return next;
+}
+
 export function importWordToBook(bookId: number, word: string, color: string) {
   const next = addWordToBook(bookId, word);
   const entity = next.wordBookMap[bookId];

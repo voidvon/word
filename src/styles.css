@@ -43,6 +43,18 @@ input {
   font: inherit;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
 .app-shell {
   min-height: 100vh;
   padding: 0 0 88px;
@@ -902,6 +914,70 @@ input {
 .create-book-input-wrap :where(.adm-input) {
   --font-size: 16px;
   --color: #22262a;
+}
+
+.batch-import-popup {
+  width: 100vw;
+  height: 100vh;
+  background: #f6f8fb;
+}
+
+.batch-import-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: #f6f8fb;
+}
+
+.batch-import-navbar {
+  flex: 0 0 auto;
+  border-bottom: 1px solid rgba(23, 32, 42, 0.08);
+  background: white;
+  color: #22262a;
+  font-weight: 800;
+}
+
+.batch-import-submit {
+  border: 0;
+  background: transparent;
+  color: var(--dictionary-blue);
+  font-size: 15px;
+  font-weight: 700;
+  padding: 8px 0 8px 12px;
+}
+
+.batch-import-submit:disabled {
+  color: #aeb7c0;
+}
+
+.batch-import-editor {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 12px;
+  border: 1px solid rgba(24, 143, 227, 0.28);
+  border-radius: 8px;
+  background: white;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.batch-import-editor:focus-within {
+  border-color: var(--dictionary-blue);
+}
+
+.batch-import-editor :where(.adm-text-area) {
+  --font-size: 16px;
+  --color: #22262a;
+  height: 100%;
+  min-height: 0;
+  line-height: 1.6;
+}
+
+.batch-import-editor :where(.adm-text-area-element) {
+  height: 100%;
+  max-height: none;
+  overflow-y: auto;
 }
 
 .word-import-popup {
