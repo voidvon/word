@@ -3,14 +3,21 @@ import { Button, NavBar, Toast } from "antd-mobile";
 import { LeftOutline, RightOutline } from "antd-mobile-icons";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getWord } from "../services/dictionary";
-import { applyWordReviewAction, loadUserState, toggleWordFocus } from "../services/userState";
+import {
+  applyWordReviewAction,
+  loadUserState,
+  restoreWordReviewState,
+  toggleWordFocus,
+} from "../services/userState";
+import { normalizeWordKey } from "../utils/articleTokenizer";
 import type { DictionaryWord, WordReviewAction, WordStateType } from "../types";
 
 const statusText: Record<WordStateType, string> = {
+  n: "未背诵",
   a: "学习中",
   b: "已忽略",
   c: "已砍掉",
-  d: "已认识",
+  d: "已背会",
 };
 
 type WordReviewLocationState = {
@@ -22,11 +29,15 @@ export function WdBookWordPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { word = "" } = useParams();
-  const decodedWord = decodeURIComponent(word).toLowerCase();
+  const decodedWord = normalizeWordKey(decodeURIComponent(word));
   const [wordData, setWordData] = useState<DictionaryWord | null | undefined>(undefined);
   const [userState, setUserState] = useState(() => loadUserState());
   const [isAnswerVisible, setIsAnswerVisible] = useState(false);
   const wordState = userState.wordUserMap[decodedWord];
+  const displayWord = wordState?.displayText ?? decodedWord;
+  const isCooling = wordState?.s === "a" && wordState.t !== undefined && wordState.t > Date.now();
+  const isSuspended = wordState?.s === "b" || wordState?.s === "c";
+  const isCompleted = wordState?.s === "d";
   const reviewState = location.state as WordReviewLocationState | null;
   const reviewWords = Array.isArray(reviewState?.words) ? reviewState.words : [];
   const reviewIndex =
@@ -78,6 +89,12 @@ export function WdBookWordPage() {
     Toast.show({ content: isFocused ? "已加入重点关注" : "已取消重点关注" });
   }
 
+  function restoreStatus() {
+    const next = restoreWordReviewState(decodedWord);
+    setUserState(next);
+    Toast.show({ content: "已恢复原背诵状态" });
+  }
+
   function goNextWord() {
     if (reviewIndex < 0 || reviewWords.length === 0) {
       return;
@@ -106,7 +123,7 @@ export function WdBookWordPage() {
       </NavBar>
 
       <section className="wdbook-word-hero">
-        <h1>{decodedWord}</h1>
+        <h1>{displayWord}</h1>
         <div className="wdbook-word-meta">
           <span>{wordData?.ipa ? `英 ${wordData.ipa}` : "暂无音标"}</span>
           {wordData?.tags?.[0] ? <span>{wordData.tags[0]}</span> : null}
@@ -116,7 +133,7 @@ export function WdBookWordPage() {
 
       <section className="wdbook-word-actions">
         <button className="wdbook-progress-card" type="button">
-          <strong>第 {wordState?.a ?? 0} 级</strong>
+          <strong>{wordState?.a === undefined ? "未开始" : `第 ${wordState.a} 级`}</strong>
           <span>累计学习 {wordState?.reviewCount ?? 0} 次</span>
           <RightOutline />
         </button>
@@ -128,7 +145,7 @@ export function WdBookWordPage() {
           <span>词典</span>
         </button>
         <button className="wdbook-action-card" type="button">
-          <span>{statusText[wordState?.s ?? "a"]}</span>
+          <span>{wordState?.s ? statusText[wordState.s] : "未加入"}</span>
         </button>
       </section>
 
@@ -174,21 +191,40 @@ export function WdBookWordPage() {
 
       {isAnswerVisible ? (
         <footer className="wdbook-review-bar">
-          <Button block color="success" onClick={() => applyReviewAction("known", true)}>
-            认识
-          </Button>
-          <Button block color="warning" onClick={() => applyReviewAction("fuzzy", true)}>
-            模糊
-          </Button>
-          <Button block color="danger" onClick={() => applyReviewAction("forgotten", true)}>
-            忘记
-          </Button>
-          <Button block color="primary" onClick={() => applyReviewAction("cut", true)}>
-            砍
-          </Button>
-          <Button block fill="outline" onClick={() => applyReviewAction("ignored", true)}>
-            忽略
-          </Button>
+          {isSuspended ? (
+            <Button className="wdbook-review-wide-action" block color="primary" onClick={restoreStatus}>
+              {wordState?.s === "b" ? "取消忽略并恢复" : "取消砍掉并恢复"}
+            </Button>
+          ) : isCompleted ? (
+            <div className="wdbook-review-message is-wide">该词已完成第 7 级背诵</div>
+          ) : (
+            <>
+              {isCooling ? (
+                <div className="wdbook-review-message">
+                  该词在记忆冷却期中
+                  <small>{wordState?.t ? new Date(wordState.t).toLocaleString() : null}</small>
+                </div>
+              ) : (
+                <>
+                  <Button block color="success" onClick={() => applyReviewAction("known", true)}>
+                    认识
+                  </Button>
+                  <Button block color="warning" onClick={() => applyReviewAction("fuzzy", true)}>
+                    模糊
+                  </Button>
+                  <Button block color="danger" onClick={() => applyReviewAction("forgotten", true)}>
+                    忘记
+                  </Button>
+                </>
+              )}
+              <Button block color="primary" onClick={() => applyReviewAction("cut", true)}>
+                砍
+              </Button>
+              <Button block fill="outline" onClick={() => applyReviewAction("ignored", true)}>
+                忽略
+              </Button>
+            </>
+          )}
         </footer>
       ) : null}
     </article>

@@ -987,13 +987,15 @@ input {
   --color: #22262a;
 }
 
-.batch-import-popup {
+.batch-import-popup,
+.article-import-popup {
   width: 100vw;
   height: 100vh;
   background: #f6f8fb;
 }
 
-.batch-import-page {
+.batch-import-page,
+.article-import-page {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -1001,7 +1003,8 @@ input {
   background: #f6f8fb;
 }
 
-.batch-import-navbar {
+.batch-import-navbar,
+.article-import-navbar {
   flex: 0 0 auto;
   border-bottom: 1px solid rgba(23, 32, 42, 0.08);
   background: white;
@@ -1009,7 +1012,8 @@ input {
   font-weight: 800;
 }
 
-.batch-import-submit {
+.batch-import-submit,
+.article-import-submit {
   border: 0;
   background: transparent;
   color: var(--dictionary-blue);
@@ -1018,11 +1022,13 @@ input {
   padding: 8px 0 8px 12px;
 }
 
-.batch-import-submit:disabled {
+.batch-import-submit:disabled,
+.article-import-submit:disabled {
   color: #aeb7c0;
 }
 
-.batch-import-editor {
+.batch-import-editor,
+.article-import-editor {
   flex: 1 1 auto;
   min-height: 0;
   margin: 12px;
@@ -1031,13 +1037,18 @@ input {
   background: white;
   padding: 12px;
   overflow: hidden;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
-.batch-import-editor:focus-within {
+.batch-import-editor:focus-within,
+.article-import-editor:focus-within {
   border-color: var(--dictionary-blue);
 }
 
-.batch-import-editor :where(.adm-text-area) {
+.batch-import-editor :where(.adm-text-area),
+.article-import-editor :where(.adm-text-area) {
   --font-size: 16px;
   --color: #22262a;
   height: 100%;
@@ -1045,10 +1056,28 @@ input {
   line-height: 1.6;
 }
 
-.batch-import-editor :where(.adm-text-area-element) {
+.batch-import-editor :where(.adm-text-area-element),
+.article-import-editor :where(.adm-text-area-element) {
   height: 100%;
   max-height: none;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article-import-editor {
+  margin-bottom: 8px;
+}
+
+.article-import-summary {
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 0 14px calc(12px + env(safe-area-inset-bottom));
+  color: #69737d;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .word-import-popup {
@@ -1464,6 +1493,28 @@ input {
   border-top: 1px solid rgba(23, 32, 42, 0.08);
   background: rgba(246, 248, 251, 0.94);
   backdrop-filter: blur(12px);
+}
+
+.wdbook-review-message {
+  display: grid;
+  grid-column: span 3;
+  place-content: center;
+  color: #59636d;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.wdbook-review-message small {
+  margin-top: 2px;
+  color: #8a949e;
+  font-size: 11px;
+}
+
+.wdbook-review-message.is-wide,
+.wdbook-review-wide-action {
+  grid-column: 1 / -1;
 }
 
 @media (max-width: 800px) {

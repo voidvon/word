@@ -7,10 +7,12 @@ import {
   addWordsToBook,
   createBook,
   deleteBook,
+  importArticleWordsToBook,
   importWordToBook,
   loadUserState,
   renameBook,
 } from "../services/userState";
+import { extractTokenFrequencies, normalizeWordKey } from "../utils/articleTokenizer";
 import type { WordBook } from "../types";
 
 const fallbackBookColors = ["#2f80ed", "#27ae60", "#f2994a", "#eb5757", "#9b51e0", "#00a6a6"];
@@ -29,13 +31,20 @@ export function WdBookHomePage() {
   const [importVisible, setImportVisible] = useState(false);
   const [batchImportVisible, setBatchImportVisible] = useState(false);
   const [batchImportText, setBatchImportText] = useState("");
-  const [showBatchImportAfterActionClose, setShowBatchImportAfterActionClose] = useState(false);
+  const [articleImportVisible, setArticleImportVisible] = useState(false);
+  const [articleImportText, setArticleImportText] = useState("");
+  const [pendingImportMode, setPendingImportMode] = useState<"batch" | "article" | null>(null);
 
   const aiBuckets = useMemo(
     () => computeAiBuckets(state),
     [state],
   );
   const dictionaryWords = useMemo(() => getDictionaryWords(), []);
+  const articleTokens = useMemo(() => extractTokenFrequencies(articleImportText), [articleImportText]);
+  const articleOccurrenceCount = useMemo(
+    () => articleTokens.reduce((total, token) => total + token.count, 0),
+    [articleTokens],
+  );
   const books = useMemo(
     () =>
       state.wordBookList
@@ -84,21 +93,19 @@ export function WdBookHomePage() {
       return;
     }
 
-    const words = Array.from(
-      new Set(
-        batchImportText
-          .split(/\r?\n/)
-          .map((word) => word.trim().toLowerCase())
-          .filter(Boolean),
-      ),
-    );
+    const words = batchImportText
+      .split(/\r?\n/)
+      .map((word) => word.trim())
+      .filter(Boolean);
     if (words.length === 0) {
       Toast.show({ content: "请输入至少一个单词" });
       return;
     }
 
     const existingWords = new Set(activeBook.wordsByAdd);
-    const addedCount = words.filter((word) => !existingWords.has(word)).length;
+    const addedCount = Array.from(new Set(words.map(normalizeWordKey))).filter(
+      (word) => !existingWords.has(word),
+    ).length;
     const nextState = addWordsToBook(activeBook.id, words);
     setState(nextState);
     setBatchImportVisible(false);
@@ -112,6 +119,31 @@ export function WdBookHomePage() {
   function closeBatchImport() {
     setBatchImportVisible(false);
     setBatchImportText("");
+    setActiveBook(null);
+  }
+
+  function confirmArticleImport() {
+    if (!activeBook) {
+      return;
+    }
+    if (articleTokens.length === 0) {
+      Toast.show({ content: "文章中没有可导入的英文单词" });
+      return;
+    }
+
+    const existingWords = new Set(activeBook.wordsByAdd);
+    const addedCount = articleTokens.filter((token) => !existingWords.has(token.key)).length;
+    const nextState = importArticleWordsToBook(activeBook.id, articleTokens);
+    setState(nextState);
+    setArticleImportVisible(false);
+    setArticleImportText("");
+    setActiveBook(null);
+    Toast.show({ content: `已新增 ${addedCount} 个单词，累计 ${articleOccurrenceCount} 次出现` });
+  }
+
+  function closeArticleImport() {
+    setArticleImportVisible(false);
+    setArticleImportText("");
     setActiveBook(null);
   }
 
@@ -190,6 +222,10 @@ export function WdBookHomePage() {
             text: "批量导入单词",
           },
           {
+            key: "article-import",
+            text: "从文章中导入",
+          },
+          {
             key: "import",
             text: "从词库导入单词",
           },
@@ -204,10 +240,12 @@ export function WdBookHomePage() {
           },
         ]}
         afterClose={() => {
-          if (showBatchImportAfterActionClose) {
-            setShowBatchImportAfterActionClose(false);
+          if (pendingImportMode === "batch") {
             setBatchImportVisible(true);
+          } else if (pendingImportMode === "article") {
+            setArticleImportVisible(true);
           }
+          setPendingImportMode(null);
         }}
         cancelText="取消"
         extra={activeBook ? activeBook.name : "单词本操作"}
@@ -217,7 +255,13 @@ export function WdBookHomePage() {
           }
           if (action.key === "batch-import") {
             setBatchImportText("");
-            setShowBatchImportAfterActionClose(true);
+            setPendingImportMode("batch");
+            setActionVisible(false);
+            return;
+          }
+          if (action.key === "article-import") {
+            setArticleImportText("");
+            setPendingImportMode("article");
             setActionVisible(false);
             return;
           }
@@ -284,6 +328,50 @@ export function WdBookHomePage() {
               );
             })}
           </List>
+        </div>
+      </Popup>
+
+      <Popup
+        bodyClassName="article-import-popup"
+        destroyOnClose
+        onClose={closeArticleImport}
+        position="right"
+        visible={articleImportVisible}
+      >
+        <div className="article-import-page">
+          <NavBar
+            className="article-import-navbar"
+            onBack={closeArticleImport}
+            right={
+              <button
+                className="article-import-submit"
+                disabled={articleTokens.length === 0}
+                onClick={confirmArticleImport}
+                type="button"
+              >
+                导入
+              </button>
+            }
+          >
+            从文章中导入
+          </NavBar>
+          <div className="article-import-editor">
+            <label className="visually-hidden" htmlFor="article-import-text">
+              粘贴英文文章
+            </label>
+            <TextArea
+              autoFocus
+              id="article-import-text"
+              maxLength={100000}
+              onChange={setArticleImportText}
+              placeholder="Paste an English article here..."
+              value={articleImportText}
+            />
+          </div>
+          <div className="article-import-summary">
+            <span>{articleTokens.length} 个单词</span>
+            <span>{articleOccurrenceCount} 次出现</span>
+          </div>
         </div>
       </Popup>
 

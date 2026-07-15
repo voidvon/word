@@ -6,6 +6,8 @@
 
 > 2026-07-14 需求补充：用户单词状态扩展为 `n/a/b/c/d`，新增错误次数 `ec`，遗忘列表与记忆冷却期成为首要核心逻辑。“今日新词”不再实现并将在后续删除。本文已按该补充更新，冲突处以新规则为准。
 
+> 2026-07-15 需求确认：背诵动作使用“忘记”；`a=7` 时再次认识进入 `d`；使用 `previousStatus` 恢复忽略/砍掉前状态；分类列表动态派生；易错词为 `s="a" && ec>=3`。阶段间隔与颜色迁入集中配置，后续允许用户自定义。
+
 当前项目不是传统意义上的完整整屏词典 App，而是完整 App 的左侧边栏子应用。完整 App 会分成左右两栏：左栏承载当前词典、搜索、单词块、每日推荐、知识圈等模块，右栏承载用户正在浏览的英文网页或其它页面。
 
 后续右栏网页会通过 App 内置通道读取左栏状态，并把网页内的选词、查词、加入学习、忽略等行为回传到左栏。产品最终还会通过 JS 注入到右侧网页中，实现类似 Relingo 的单词提示，并继续扩展更多网页增强能力。
@@ -187,13 +189,15 @@ export type DictionaryWord = {
 export type WordUserStatusType = "n" | "a" | "b" | "c" | "d"
 
 export type WordUserState = {
-  s: WordUserStatusType
+  s?: WordUserStatusType
   a?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7
   sc: number
   t?: number
   l: number[]
   ec: number
   focused?: boolean
+  previousStatus?: "n" | "a" | null
+  displayText?: string
 }
 
 export type WordUserStateMap = Record<string, WordUserState>
@@ -206,8 +210,10 @@ export type WordUserStateMap = Record<string, WordUserState>
 3. `sc`：查询次数
 4. `t`：下一次允许背诵的时间戳；新词阶段可不存在
 5. `l`：所属单词本 id 列表
-6. `ec`：点击“不认识”的累计错误次数
+6. `ec`：点击“忘记”的累计错误次数
 7. `focused`：是否重点关注，即收藏；汇总模块暂缓但保留数据位
+8. `previousStatus`：忽略/砍掉前的 `n/a` 状态，用于取消后恢复
+9. `displayText`：保留用户输入的原始大小写；map key 使用规范化文本
 
 状态含义：
 
@@ -215,9 +221,11 @@ export type WordUserStateMap = Record<string, WordUserState>
 2. `a`：正常背诵流程
 3. `b`：忽略/禁用
 4. `c`：砍掉/已掌握
-5. `d`：已背会，具体进入条件待确认
+5. `d`：已背会；阶段已经是 `a=7` 时再次点击“认识”进入
 
 用户导入内容不限英语，任何文字都必须能够成为 `WordUserStateMap` 的 key；词典服务查不到释义不能阻止导入。
+
+只查询但未加入单词本时，允许记录只有 `sc/ec/l` 而没有 `s`；首次加入单词本时再写入 `s="n"`。所有分类函数都必须显式判断 `s`，查询态记录不进入任何学习列表。
 
 ## 6.3 搜索历史
 
@@ -244,7 +252,7 @@ const dueList = aList.filter(word => word.t !== undefined && word.t <= now)
 const coolingList = aList.filter(word => word.t !== undefined && word.t > now)
 const bList = words.filter(word => word.s === "b")
 const cList = words.filter(word => word.s === "c")
-const eList = words.filter(word => word.ec >= 3)
+const eList = words.filter(word => word.s === "a" && word.ec >= 3)
 ```
 
 其中 `aList` 是所有正常背诵中的单词，`dueList` 才是遗忘列表实际显示的到期单词。若为性能物化这些索引，状态切换必须原子更新，不能让同一词错误残留在旧列表。
@@ -266,6 +274,7 @@ export type WordBook = {
   }
   wordsByAdd: string[]
   wordsByAlpha: string[]
+  articleWordCounts: Record<string, number>
   createdAt: number
   updatedAt: number
 }
@@ -317,22 +326,34 @@ export type AppUserData = {
 
 ## 7. 状态规则设计
 
-## 7.1 艾宾浩斯阶段映射
+## 7.1 可配置背诵阶段
 
-建议在常量文件固定：
+默认阶段集中放在 `src/config/review.ts`，页面和服务层只读取配置，不直接硬编码时间或颜色：
 
 ```ts
-export const REVIEW_STAGE_DELAYS = {
-  0: 0,
-  1: 20 * 60 * 1000,
-  2: 60 * 60 * 1000,
-  3: 9 * 60 * 60 * 1000,
-  4: 24 * 60 * 60 * 1000,
-  5: 2 * 24 * 60 * 60 * 1000,
-  6: 6 * 24 * 60 * 60 * 1000,
-  7: 31 * 24 * 60 * 60 * 1000,
+export const DEFAULT_REVIEW_CONFIG = {
+  stages: [
+    { stage: 0, delayMs: 0, color: "gray" },
+    { stage: 1, delayMs: 20 * 60 * 1000, color: "red" },
+    { stage: 2, delayMs: 60 * 60 * 1000, color: "orange" },
+    { stage: 3, delayMs: 9 * 60 * 60 * 1000, color: "yellow" },
+    { stage: 4, delayMs: 24 * 60 * 60 * 1000, color: "green" },
+    { stage: 5, delayMs: 2 * 24 * 60 * 60 * 1000, color: "cyan" },
+    { stage: 6, delayMs: 6 * 24 * 60 * 60 * 1000, color: "blue" },
+    { stage: 7, delayMs: 31 * 24 * 60 * 60 * 1000, color: "purple" },
+  ],
+  statusColors: {
+    n: "#78909C",
+    b: "#455A64",
+    c: "#D81B60",
+    d: "#B8860B",
+  },
+  frequentLookupThreshold: 3,
+  errorThreshold: 3,
 } as const
 ```
+
+未来开放用户自定义时，把覆盖项保存到用户设置；读取时与默认配置合并，并校验阶段连续、延迟非负、颜色合法。
 
 ## 7.2 `t` 字段规则
 
@@ -340,7 +361,7 @@ export const REVIEW_STAGE_DELAYS = {
 
 1. `s="a"` 时，`t` 表示下一次允许背诵的时间。
 2. `t <= now` 表示已到期，进入遗忘列表并显示背诵按钮。
-3. `t > now` 表示记忆冷却中，不进入遗忘列表；若从其它入口打开背诵卡，隐藏“认识 / 模糊 / 不认识”并显示冷却提示。
+3. `t > now` 表示记忆冷却中，不进入遗忘列表；若从其它入口打开背诵卡，隐藏“认识 / 模糊 / 忘记”并显示冷却提示。
 4. 切换到 `b` 或 `c` 时不得改写已有 `a` 和 `t`，取消后才能恢复原进度。
 5. `s="n"` 时尚未背诵，允许不存在 `a` 和 `t`。
 
@@ -378,25 +399,26 @@ function getNextReviewTime(stage: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7, now: number): n
 
 ## 7.5 背诵操作规则
 
-执行“认识 / 模糊 / 不认识”任一操作时，统一把 `s` 写为 `a`。若原先没有阶段 `a`，以 `0` 作为初始值：
+执行“认识 / 模糊 / 忘记”任一操作时，统一把 `s` 写为 `a`。若原先没有阶段 `a`，以 `0` 作为初始值：
 
 1. 认识：`a = min(7, a + 1)`
 2. 模糊：`a` 不变
-3. 不认识：`a = max(0, a - 1)`，并执行 `ec += 1`
-4. 最后统一计算 `t = now + REVIEW_STAGE_DELAYS[a]`
+3. 忘记：`a = max(0, a - 1)`，并执行 `ec += 1`
+4. 最后统一计算 `t = now + reviewConfig.stages[a].delayMs`
 5. 若原状态为 `n`，从 `nList` 移入 `aList`
+6. 若当前已经是 `a=7`，再次点击认识时令 `s="d"`
 
 ## 7.6 忽略、砍掉与恢复
 
 用户忽略或砍掉一个词时：
 
-1. 忽略只把 `s` 改为 `b`
-2. 砍掉只把 `s` 改为 `c`
+1. 忽略先把原 `s` 写入 `previousStatus`，再把 `s` 改为 `b`
+2. 砍掉先把原 `s` 写入 `previousStatus`，再把 `s` 改为 `c`
 3. 不修改 `a`、`t`、`ec`、`sc` 和 `l`
 4. 从原 `nList` 或 `aList` 移除，进入 `bList` 或 `cList`
-5. 取消操作时恢复原来的 `n` 或 `a` 状态和原背诵进度
+5. 取消操作时从 `previousStatus` 恢复原来的 `n` 或 `a`，随后清空该字段
 
-恢复原状态的存储方式仍需确认：可根据是否存在阶段 `a` 推断，也可新增 `previousStatus` 显式保存。
+原 `a/t` 始终保留，因此恢复状态后可以立即恢复原背诵进度。
 
 ## 8. 页面组件设计
 
@@ -511,7 +533,7 @@ type UserStateService = {
   saveState(next: AppUserData): void
   touchSearchWord(word: string): AppUserData
   addWordToBook(word: string, bookId: number): AppUserData
-  reviewWord(word: string, action: "known" | "fuzzy" | "unknown"): AppUserData
+  reviewWord(word: string, action: "known" | "fuzzy" | "forgotten"): AppUserData
   ignoreWord(word: string): AppUserData
   cutWord(word: string): AppUserData
   restoreWord(word: string): AppUserData
@@ -534,7 +556,40 @@ type WordBookService = {
 }
 ```
 
-## 9.4 跨栏桥接服务
+## 9.4 文章分词工具与导入服务
+
+该功能在核心背诵流程完成后开发。全局工具建议放在 `src/utils/article-tokenizer.ts`，不得写死在单词本页面中：
+
+```ts
+type TokenFrequency = {
+  key: string
+  displayText: string
+  count: number
+  firstIndex: number
+}
+
+type ArticleTokenizer = {
+  extractTokenFrequencies(text: string, locale?: string): TokenFrequency[]
+}
+
+type ArticleImportService = {
+  previewArticle(text: string, locale?: string): TokenFrequency[]
+  importArticleWords(bookId: number, tokens: TokenFrequency[]): AppUserData
+}
+```
+
+实现规则：
+
+1. 首版只处理英文。
+2. 首版使用英文 tokenizer；未来扩展多语言时可在同一接口下接入 `Intl.Segmenter` 或专业分词库。
+3. 标点和空白作为分隔符，不能直接删除后连接两侧文本。
+4. 英文撇号和连字符允许出现在 token 内部。
+5. 数字、邮箱和 URL 必须过滤。
+6. 对 token 规范化后去重、累计次数，并按 `count` 降序、`firstIndex` 升序排序。
+7. 出现次数保存在目标 `WordBook.articleWordCounts` 中，已存在单词重复导入时累加。
+8. 单词本页面和未来网页插件复用同一个纯函数。
+
+## 9.5 跨栏桥接服务
 
 跨栏桥接服务用于隔离左侧边栏状态和右侧网页环境。MVP 阶段可以先复用 LocalStorage 和普通函数，后续根据 App 外壳替换成 WebView bridge、postMessage、扩展 runtime message 或其它宿主能力。
 
@@ -545,7 +600,7 @@ type SidebarBridgeService = {
   getWordForPage(word: string): Promise<DictionaryWord | null>
   getWordUserState(word: string): WordUserState | null
   reportLookupFromPage(word: string, source: "hover" | "select" | "manual"): AppUserData
-  reportWordActionFromPage(word: string, action: "add" | "known" | "fuzzy" | "unknown" | "ignore" | "cut"): AppUserData
+  reportWordActionFromPage(word: string, action: "add" | "known" | "fuzzy" | "forgotten" | "ignore" | "cut"): AppUserData
   subscribeStateChange(listener: (next: AppUserData) => void): () => void
 }
 ```
@@ -557,7 +612,7 @@ type SidebarBridgeService = {
 3. 桥接层要保留来源字段，后续区分左栏手动查词和网页注入触发的查词
 4. 右侧网页刷新提示时应订阅状态变更，而不是反复全量扫描左栏数据
 
-## 9.5 注入服务
+## 9.6 注入服务
 
 注入服务面向右侧网页里的 JS 脚本，负责把词典和用户状态转换成网页可消费的数据。
 
@@ -592,7 +647,7 @@ type InjectionService = {
 1. 遗忘中的单词（核心）：`s="a" && t <= now`
 2. 冷却中的学习词：`s="a" && t > now`，不显示在遗忘列表
 3. 今日新词：不实现，模块后续删除
-4. 易错词：`ec >= 3`；是否还要限制 `s="a"` 待确认
+4. 易错词：`s="a" && ec >= 3`
 5. 不认识：`s="n"`，汇总模块暂缓
 6. 重点关注：`focused=true`，汇总模块暂缓
 7. 常查单词：`sc >= 3`，汇总模块暂缓
@@ -636,7 +691,7 @@ function getWordTileColor(state: WordUserState | undefined): string
 7. `s="a", a=6`：蓝色
 8. `s="a", a=7`：紫色
 
-`s=n/b/c/d` 的颜色尚未定义，颜色函数必须把“状态色”和“背诵阶段色”分开配置。
+状态色暂定：`n=#78909C`、`b=#455A64`、`c=#D81B60`、`d=#B8860B`。颜色函数必须把“状态色”和“背诵阶段色”分开读取配置。
 
 ## 11. 持久化建议
 
@@ -694,7 +749,7 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 1. 单词块首页布局
 2. 遗忘列表 `t <= now` 到期筛选
 3. 冷却期背诵卡提示与按钮隐藏
-4. 认识/模糊/不认识阶段流转及时间计算
+4. 认识/模糊/忘记阶段流转及时间计算
 5. 忽略/砍掉及恢复机制
 6. 我的单词本列表
 7. 创建单词本
@@ -703,25 +758,24 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 
 ## 13.4 Phase 4 补强
 
-1. 完善重点关注、常查单词、不认识等暂缓分类
-2. 完善单词颜色映射
-3. 接入更多页面交互
-4. 预留同步与 OCR 扩展点
-5. 定义左栏与右侧网页之间的桥接服务
-6. 定义注入脚本所需的单词提示数据结构
+1. 增加“从文章中导入”及全局分词工具
+2. 完善重点关注、常查单词、不认识等暂缓分类
+3. 完善单词颜色映射
+4. 接入更多页面交互
+5. 预留同步与 OCR 扩展点
+6. 定义左栏与右侧网页之间的桥接服务
+7. 定义注入脚本所需的单词提示数据结构
 
 ## 14. 风险与注意事项
 
 ## 14.1 风险一：PPT 存在概念未闭合
 
-包括：
+需要重点防止：
 
-1. `d` 的准确进入条件
-2. 取消 `b/c` 时原状态的保存方式
-3. `eList` 是否排除已经忽略或砍掉的单词
-4. `s=n/b/c/d` 的颜色
-5. 任意文字导入时的大小写与 Unicode 规范化规则
-6. 只查询但未加入单词本的文本在 `wordUserMap` 中如何表示；它需要累计 `sc`，但不应误入 `nList`
+1. 分词正则误把邮箱、URL 或数字片段导入。
+2. 直接删除标点和空格导致相邻单词被拼接。
+3. 文章重复导入时漏加或重复覆盖 `articleWordCounts`。
+4. 查询态记录因为缺少 `s` 被错误归入某个学习列表。
 
 处理方式：
 
@@ -774,7 +828,8 @@ const USER_STATE_STORAGE_KEY = "word-app-user-state-v1"
 2. 完成 `n -> a`、`a` 阶段流转、`b/c` 切换与恢复
 3. 接入 `ec` 和 0～7 阶段色
 4. 补齐未完成的单词本管理能力：重命名、删除、详情页搜索
-5. 再实现重点关注、常查单词、不认识三个暂缓汇总模块
-6. 抽出 `bridge` 服务并定义注入脚本协议
+5. 增加“从文章中导入”及可复用分词工具
+6. 再实现重点关注、常查单词、不认识三个暂缓汇总模块
+7. 抽出 `bridge` 服务并定义注入脚本协议
 
 “今日新词”不再列入后续开发顺序，应在合适版本删除现有入口和逻辑。

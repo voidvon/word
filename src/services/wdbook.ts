@@ -1,6 +1,5 @@
 import type { AiBucket, AiBucketDefinition, AiBucketKey, AppUserData, WordBook, WordUserState } from "../types";
-
-const ONE_DAY = 24 * 60 * 60 * 1000;
+import { DEFAULT_REVIEW_CONFIG } from "../config/review";
 
 export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
   {
@@ -13,57 +12,21 @@ export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
     ruleType: "local-rule",
   },
   {
-    key: "new",
-    title: "🔥 今日新词",
-    tone: "green",
-    description: "最近 24 小时首次加入的单词",
-    enabled: true,
-    order: 20,
-    ruleType: "local-rule",
-  },
-  {
     key: "hard",
     title: "📚易错词",
     tone: "blue",
-    description: "多次标记为模糊或忘记的单词",
+    description: "学习中且累计忘记达到 3 次的单词",
     enabled: true,
-    order: 30,
-    ruleType: "local-rule",
-  },
-  {
-    key: "unknown",
-    title: "❗不认识",
-    tone: "gray",
-    description: "首次明确标记为忘记的单词",
-    enabled: true,
-    order: 40,
-    ruleType: "local-rule",
-  },
-  {
-    key: "focus",
-    title: "⭐重点关注",
-    tone: "orange",
-    description: "用户主动标记为重点关注的单词",
-    enabled: true,
-    order: 50,
+    order: 20,
     ruleType: "local-rule",
   },
   {
     key: "mastered",
     title: "👍🏻砍掉的单词",
     tone: "red",
-    description: "已明确标记为认识的单词",
+    description: "用户主动砍掉并标记为掌握的单词",
     enabled: true,
-    order: 60,
-    ruleType: "local-rule",
-  },
-  {
-    key: "frequent",
-    title: "🔍常查的单词",
-    tone: "teal",
-    description: "查询次数较高的单词",
-    enabled: true,
-    order: 70,
+    order: 30,
     ruleType: "local-rule",
   },
   {
@@ -72,7 +35,7 @@ export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
     tone: "black",
     description: "已标记为忽略的单词",
     enabled: true,
-    order: 80,
+    order: 40,
     ruleType: "local-rule",
   },
 ];
@@ -109,28 +72,16 @@ export function normalizeAiBucketPrefs(state: AppUserData): AppUserData["aiBucke
 
 function matchesAiBucket(bucketKey: AiBucketKey, value: WordUserState, now: number) {
   if (bucketKey === "due") {
-    return value.s === "a" && value.t <= now;
-  }
-  if (bucketKey === "new") {
-    return value.s === "a" && now - value.createdAt < ONE_DAY;
+    return value.s === "a" && value.t !== undefined && value.t <= now;
   }
   if (bucketKey === "hard") {
-    return value.fuzzyCount + value.wrongCount >= 2;
-  }
-  if (bucketKey === "unknown") {
-    return value.s === "a" && value.wrongCount === 1;
-  }
-  if (bucketKey === "focus") {
-    return value.focused;
+    return value.s === "a" && value.ec >= DEFAULT_REVIEW_CONFIG.errorThreshold;
   }
   if (bucketKey === "mastered") {
     return value.s === "c";
   }
-  if (bucketKey === "frequent") {
-    return value.sc >= 3;
-  }
   if (bucketKey === "ignored") {
-    return value.s === "b" || Boolean(value.ignoredAt);
+    return value.s === "b";
   }
   return false;
 }
@@ -172,7 +123,7 @@ export function getAiBucketWords(state: AppUserData, bucketKey: string) {
 
   const words = entries
     .filter(([, value]) => matchesAiBucket(bucket.key, value, now))
-    .sort((left, right) => right[1].t - left[1].t)
+    .sort((left, right) => (right[1].t ?? 0) - (left[1].t ?? 0))
     .map(([word]) => word);
 
   return words;

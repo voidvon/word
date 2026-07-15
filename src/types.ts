@@ -23,22 +23,25 @@ export type DictionaryWord = {
   }>;
 };
 
-export type WordStateType = "a" | "b" | "c" | "d";
+export type WordStateType = "n" | "a" | "b" | "c" | "d";
 export type WordReviewAction = "known" | "fuzzy" | "forgotten" | "cut" | "ignored";
+export type ReviewStage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
 export type WordUserState = {
-  s: WordStateType;
-  a?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+  s?: WordStateType;
+  a?: ReviewStage;
   sc: number;
   reviewCount: number;
   createdAt: number;
   lastReviewedAt?: number;
-  t: number;
+  t?: number;
   l: number[];
   fuzzyCount: number;
-  wrongCount: number;
+  ec: number;
   focused: boolean;
   ignoredAt?: number;
+  previousStatus?: "n" | "a";
+  displayText?: string;
 };
 
 export type WordUserStateMap = Record<string, WordUserState>;
@@ -54,6 +57,7 @@ export type WordBook = {
   };
   wordsByAdd: string[];
   wordsByAlpha: string[];
+  articleWordCounts: Record<string, number>;
   createdAt: number;
   updatedAt: number;
 };
@@ -70,7 +74,7 @@ export type WordBookGroup = {
 export type WordBookEntity = WordBook | WordBookGroup;
 
 export type AppUserData = {
-  version: 1;
+  version: 2;
   searchList: string[];
   studyList: string[];
   wordUserMap: WordUserStateMap;
@@ -92,13 +96,16 @@ export type AiBucketTone = "orange" | "blue" | "green" | "gray" | "red" | "purpl
 export type AiBucketRuleType = "local-rule" | "ai-generated" | "remote";
 export type AiBucketKey =
   | "due"
-  | "new"
   | "hard"
-  | "unknown"
-  | "focus"
   | "mastered"
-  | "frequent"
   | "ignored";
+
+export type ArticleTokenFrequency = {
+  key: string;
+  displayText: string;
+  count: number;
+  firstIndex: number;
+};
 
 export type AiBucketDefinition = {
   key: AiBucketKey;

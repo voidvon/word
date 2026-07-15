@@ -1,14 +1,26 @@
-import { REVIEW_STAGE_DELAYS, STORAGE_KEY } from "../constants";
+import { STORAGE_KEY } from "../constants";
+import { getReviewStageConfig } from "../config/review";
 import { seedUserData } from "../data/seedBooks";
 import { normalizeAiBucketPrefs } from "./wdbook";
-import type { AppUserData, WordBook, WordReviewAction, WordUserState } from "../types";
+import { normalizeWordKey } from "../utils/articleTokenizer";
+import type {
+  AppUserData,
+  ArticleTokenFrequency,
+  ReviewStage,
+  WordBook,
+  WordReviewAction,
+  WordUserState,
+} from "../types";
 
 export const BUILTIN_BOOK_ID = 0;
 export const BUILTIN_BOOK_NAME = "我的单词本";
 const LEGACY_SEED_SEARCH_WORDS = ["seek", "evidence", "refund", "deactivate", "special"];
 const LEGACY_SEED_WORDS = ["terminate", "legate", "salient", "appall", "succeed", "evidence", "refund"];
 const MAX_REVIEW_STAGE = 7;
-type ReviewStage = NonNullable<WordUserState["a"]>;
+type LegacyWordUserState = Partial<WordUserState> & {
+  favorited?: boolean;
+  wrongCount?: number;
+};
 const LEGACY_SEED_BOOKS: Record<number, { name: string; wordsByAdd: string[] }> = {
   1: {
     name: "斯克林",
@@ -85,7 +97,7 @@ function cloneState(state: AppUserData): AppUserData {
 }
 
 function normalizeWord(word: string) {
-  return word.trim().toLowerCase();
+  return normalizeWordKey(word);
 }
 
 function normalizeReviewStage(stage: WordUserState["a"]): ReviewStage {
@@ -93,26 +105,28 @@ function normalizeReviewStage(stage: WordUserState["a"]): ReviewStage {
 }
 
 function getNextReviewTime(stage: ReviewStage, now: number) {
-  return now + (REVIEW_STAGE_DELAYS[stage] ?? 0);
+  return now + getReviewStageConfig(stage).delayMs;
 }
 
-function ensureWordState(state: AppUserData, word: string) {
+function ensureWordState(state: AppUserData, word: string, imported = false, displayText = word) {
   const normalized = normalizeWord(word);
-  const prev = state.wordUserMap[normalized];
+  const prev = state.wordUserMap[normalized] as LegacyWordUserState | undefined;
   const now = Date.now();
   const nextWordState: WordUserState = {
-    s: prev?.s ?? "a",
-    a: prev?.a ?? 0,
+    s: prev?.s ?? (imported ? "n" : undefined),
+    a: prev?.a,
     sc: prev?.sc ?? 0,
     reviewCount: prev?.reviewCount ?? 0,
     createdAt: prev?.createdAt ?? prev?.t ?? now,
     lastReviewedAt: prev?.lastReviewedAt,
-    t: prev?.t ?? now,
+    t: prev?.t,
     l: prev?.l ?? [],
     fuzzyCount: prev?.fuzzyCount ?? 0,
-    wrongCount: prev?.wrongCount ?? 0,
-    focused: prev?.focused ?? Boolean((prev as WordUserState & { favorited?: boolean })?.favorited),
+    ec: prev?.ec ?? prev?.wrongCount ?? 0,
+    focused: prev?.focused ?? Boolean(prev?.favorited),
     ignoredAt: prev?.ignoredAt,
+    previousStatus: prev?.previousStatus,
+    displayText: (prev?.displayText ?? displayText.trim().normalize("NFKC")) || normalized,
   };
   state.wordUserMap[normalized] = nextWordState;
   return nextWordState;
@@ -178,6 +192,7 @@ function ensureBuiltinBook(state: AppUserData) {
     report: { total: 0, mastered: 0 },
     wordsByAdd: [],
     wordsByAlpha: [],
+    articleWordCounts: {},
     createdAt: now,
     updatedAt: now,
   };
@@ -263,16 +278,50 @@ function removeLegacySeedBooks(state: AppUserData) {
 
 function normalizeWordUserMap(state: AppUserData) {
   const next = cloneState(state);
-  Object.keys(next.wordUserMap).forEach((word) => {
-    ensureWordState(next, word);
+  const legacyVersion = (state as AppUserData & { version?: number }).version ?? 1;
+  const previousEntries = Object.entries(next.wordUserMap);
+  next.wordUserMap = {};
+
+  previousEntries.forEach(([word, rawWordState]) => {
+    const normalized = normalizeWord(word);
+    next.wordUserMap[normalized] = rawWordState;
+    const wordState = ensureWordState(next, normalized, false, rawWordState.displayText ?? word);
+    const hasNeverReviewed =
+      wordState.s === "a" &&
+      wordState.reviewCount === 0 &&
+      !wordState.lastReviewedAt &&
+      wordState.fuzzyCount === 0 &&
+      wordState.ec === 0;
+    if (legacyVersion < 2 && hasNeverReviewed) {
+      wordState.s = wordState.l.length > 0 ? "n" : undefined;
+      wordState.a = undefined;
+      wordState.t = undefined;
+    }
   });
   return next;
 }
 
-function migrateUserState(state: AppUserData) {
-  const next = normalizeWordUserMap(removeLegacySeedSearchHistory(removeLegacySeedBooks(ensureBuiltinBook(state))));
+function normalizeWordBooks(state: AppUserData) {
+  const next = cloneState(state);
+  Object.entries(next.wordBookMap).forEach(([bookId, entity]) => {
+    if (!isBookEntity(entity)) {
+      return;
+    }
+    next.wordBookMap[Number(bookId)] = {
+      ...entity,
+      articleWordCounts: entity.articleWordCounts ?? {},
+    };
+  });
+  return next;
+}
+
+function migrateUserState(state: AppUserData): AppUserData {
+  const next = normalizeWordBooks(
+    normalizeWordUserMap(removeLegacySeedSearchHistory(removeLegacySeedBooks(ensureBuiltinBook(state)))),
+  );
   return {
     ...next,
+    version: 2 as const,
     aiBucketPrefs: normalizeAiBucketPrefs(next),
   };
 }
@@ -297,7 +346,7 @@ export function touchSearchWord(word: string) {
   const next = cloneState(base);
   const normalized = normalizeWord(word);
   next.searchList = [normalized, ...next.searchList.filter((item) => item !== normalized)];
-  const nextWordState = ensureWordState(next, normalized);
+  const nextWordState = ensureWordState(next, normalized, false, word);
   nextWordState.sc += 1;
   pushUpdate(next, "search", { word: normalized });
 
@@ -326,6 +375,7 @@ export function createBook(name: string) {
         },
         wordsByAdd: [],
         wordsByAlpha: [],
+        articleWordCounts: {},
         createdAt: now,
         updatedAt: now,
       },
@@ -383,11 +433,11 @@ export function addWordToBook(bookId: number, word: string) {
   const normalized = normalizeWord(word);
   const entity = next.wordBookMap[bookId];
 
-  if (!entity || !isBookEntity(entity)) {
+  if (!normalized || !entity || !isBookEntity(entity)) {
     return next;
   }
 
-  const wordState = ensureWordState(next, normalized);
+  const wordState = ensureWordState(next, normalized, true, word);
   if (!entity.wordsByAdd.includes(normalized)) {
     const wordsByAdd = [normalized, ...entity.wordsByAdd];
     const wordsByAlpha = [...wordsByAdd].sort((left, right) => left.localeCompare(right));
@@ -418,9 +468,14 @@ export function addWordsToBook(bookId: number, words: string[]) {
     return next;
   }
 
-  const normalizedWords = Array.from(
-    new Set(words.map(normalizeWord).filter(Boolean)),
-  );
+  const normalizedWordMap = new Map<string, string>();
+  words.forEach((word) => {
+    const normalized = normalizeWord(word);
+    if (normalized && !normalizedWordMap.has(normalized)) {
+      normalizedWordMap.set(normalized, word.trim().normalize("NFKC"));
+    }
+  });
+  const normalizedWords = Array.from(normalizedWordMap.keys());
   if (normalizedWords.length === 0) {
     return next;
   }
@@ -429,7 +484,7 @@ export function addWordsToBook(bookId: number, words: string[]) {
   const addedWords = normalizedWords.filter((word) => !existingWords.has(word));
 
   normalizedWords.forEach((word) => {
-    const wordState = ensureWordState(next, word);
+    const wordState = ensureWordState(next, word, true, normalizedWordMap.get(word) ?? word);
     if (!wordState.l.includes(bookId)) {
       wordState.l = [...wordState.l, bookId];
     }
@@ -443,11 +498,77 @@ export function addWordsToBook(bookId: number, words: string[]) {
       wordsByAlpha: [...wordsByAdd].sort((left, right) => left.localeCompare(right)),
       updatedAt: Date.now(),
     };
-    recomputeBookReport(next, bookId);
-    pushUpdate(next, "add-words-to-book", { bookId, words: addedWords });
-    saveUserState(next);
   }
 
+  recomputeBookReport(next, bookId);
+  pushUpdate(next, "add-words-to-book", { bookId, words: addedWords });
+  saveUserState(next);
+
+  return next;
+}
+
+export function importArticleWordsToBook(bookId: number, tokens: ArticleTokenFrequency[]) {
+  const base = loadUserState();
+  const next = cloneState(base);
+  const entity = next.wordBookMap[bookId];
+
+  if (!entity || !isBookEntity(entity)) {
+    return next;
+  }
+
+  const tokenMap = new Map<string, ArticleTokenFrequency>();
+  tokens.forEach((token) => {
+    const key = normalizeWord(token.key || token.displayText);
+    if (!key || token.count <= 0) {
+      return;
+    }
+    const existing = tokenMap.get(key);
+    if (existing) {
+      existing.count += token.count;
+      existing.firstIndex = Math.min(existing.firstIndex, token.firstIndex);
+      return;
+    }
+    tokenMap.set(key, {
+      ...token,
+      key,
+      count: Math.floor(token.count),
+    });
+  });
+
+  const sortedTokens = Array.from(tokenMap.values()).sort(
+    (left, right) => right.count - left.count || left.firstIndex - right.firstIndex,
+  );
+  if (sortedTokens.length === 0) {
+    return next;
+  }
+
+  const existingWords = new Set(entity.wordsByAdd);
+  const addedWords = sortedTokens.map((token) => token.key).filter((word) => !existingWords.has(word));
+  const articleWordCounts = { ...entity.articleWordCounts };
+
+  sortedTokens.forEach((token) => {
+    const wordState = ensureWordState(next, token.key, true, token.displayText);
+    if (!wordState.l.includes(bookId)) {
+      wordState.l = [...wordState.l, bookId];
+    }
+    articleWordCounts[token.key] = (articleWordCounts[token.key] ?? 0) + token.count;
+  });
+
+  const wordsByAdd = [...addedWords, ...entity.wordsByAdd];
+  next.wordBookMap[bookId] = {
+    ...entity,
+    wordsByAdd,
+    wordsByAlpha: [...wordsByAdd].sort((left, right) => left.localeCompare(right)),
+    articleWordCounts,
+    updatedAt: Date.now(),
+  };
+  recomputeBookReport(next, bookId);
+  pushUpdate(next, "import-article-words", {
+    bookId,
+    addedWords,
+    frequencies: sortedTokens.map(({ key, count }) => ({ key, count })),
+  });
+  saveUserState(next);
   return next;
 }
 
@@ -475,34 +596,23 @@ export function addWordToBuiltinBook(word: string) {
 }
 
 export function addWordToStudy(word: string, bookId?: number) {
-  let next = addWordToBook(bookId ?? loadUserState().wordBookList[0] ?? 1, word);
-  next = cloneState(next);
-  const normalized = normalizeWord(word);
-  const wordState = ensureWordState(next, normalized);
-  wordState.s = "a";
-  wordState.a = 0;
-  wordState.t = Date.now();
-  next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
-  pushUpdate(next, "add-word-to-study", { bookId, word: normalized });
-  saveUserState(next);
-  return next;
+  return addWordToBook(bookId ?? loadUserState().wordBookList[0] ?? BUILTIN_BOOK_ID, word);
 }
 
 export function applyWordReviewAction(word: string, action: WordReviewAction) {
   const base = loadUserState();
   const next = cloneState(base);
   const normalized = normalizeWord(word);
-  const wordState = ensureWordState(next, normalized);
+  const wordState = ensureWordState(next, normalized, true, word);
   const now = Date.now();
   const currentStage = normalizeReviewStage(wordState.a);
 
-  wordState.lastReviewedAt = now;
-  wordState.reviewCount += 1;
   if (action === "known") {
+    wordState.lastReviewedAt = now;
+    wordState.reviewCount += 1;
     if (currentStage >= MAX_REVIEW_STAGE) {
       wordState.s = "d";
       wordState.a = MAX_REVIEW_STAGE;
-      wordState.t = now;
       next.studyList = next.studyList.filter((item) => item !== normalized);
     } else {
       const nextStage = (currentStage + 1) as ReviewStage;
@@ -512,29 +622,40 @@ export function applyWordReviewAction(word: string, action: WordReviewAction) {
       next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
     }
     wordState.ignoredAt = undefined;
+    wordState.previousStatus = undefined;
   } else if (action === "fuzzy") {
+    wordState.lastReviewedAt = now;
+    wordState.reviewCount += 1;
     wordState.s = "a";
     wordState.a = currentStage;
     wordState.t = getNextReviewTime(currentStage, now);
     wordState.fuzzyCount += 1;
     wordState.ignoredAt = undefined;
+    wordState.previousStatus = undefined;
     next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
   } else if (action === "forgotten") {
+    wordState.lastReviewedAt = now;
+    wordState.reviewCount += 1;
     const previousStage = Math.max(0, currentStage - 1) as ReviewStage;
     wordState.s = "a";
     wordState.a = previousStage;
     wordState.t = getNextReviewTime(previousStage, now);
-    wordState.wrongCount += 1;
+    wordState.ec += 1;
     wordState.ignoredAt = undefined;
+    wordState.previousStatus = undefined;
     next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
   } else if (action === "ignored") {
+    if (wordState.s === "n" || wordState.s === "a") {
+      wordState.previousStatus = wordState.s;
+    }
     wordState.s = "b";
-    wordState.t = now;
     wordState.ignoredAt = now;
     next.studyList = next.studyList.filter((item) => item !== normalized);
   } else {
+    if (wordState.s === "n" || wordState.s === "a") {
+      wordState.previousStatus = wordState.s;
+    }
     wordState.s = "c";
-    wordState.t = now;
     wordState.ignoredAt = undefined;
     next.studyList = next.studyList.filter((item) => item !== normalized);
   }
@@ -554,14 +675,38 @@ export function applyWordReviewAction(word: string, action: WordReviewAction) {
   return next;
 }
 
+export function restoreWordReviewState(word: string) {
+  const base = loadUserState();
+  const next = cloneState(base);
+  const normalized = normalizeWord(word);
+  const wordState = ensureWordState(next, normalized, true, word);
+
+  if (wordState.s !== "b" && wordState.s !== "c") {
+    return next;
+  }
+
+  wordState.s = wordState.previousStatus ?? (wordState.a === undefined ? "n" : "a");
+  wordState.previousStatus = undefined;
+  wordState.ignoredAt = undefined;
+  if (wordState.s === "a") {
+    next.studyList = [normalized, ...next.studyList.filter((item) => item !== normalized)];
+  }
+
+  for (const bookId of wordState.l) {
+    recomputeBookReport(next, bookId);
+  }
+  pushUpdate(next, "restore-word-status", { word: normalized, status: wordState.s });
+  saveUserState(next);
+  return next;
+}
+
 export function toggleWordFocus(word: string) {
   const base = loadUserState();
   const next = cloneState(base);
   const normalized = normalizeWord(word);
-  const wordState = ensureWordState(next, normalized);
+  const wordState = ensureWordState(next, normalized, false, word);
 
   wordState.focused = !wordState.focused;
-  wordState.t = Date.now();
   pushUpdate(next, "toggle-word-focus", { word: normalized, focused: wordState.focused });
   saveUserState(next);
   return next;

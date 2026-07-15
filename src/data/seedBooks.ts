@@ -3,7 +3,7 @@ import type { AppUserData } from "../types";
 const now = Date.now();
 
 export const seedUserData: AppUserData = {
-  version: 1,
+  version: 2,
   searchList: [],
   studyList: [],
   wordUserMap: {},
@@ -17,6 +17,7 @@ export const seedUserData: AppUserData = {
       report: { total: 0, mastered: 0 },
       wordsByAdd: [],
       wordsByAlpha: [],
+      articleWordCounts: {},
       createdAt: now,
       updatedAt: now,
     },

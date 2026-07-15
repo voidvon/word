@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { Button, NavBar } from "antd-mobile";
 import { FilterOutline } from "antd-mobile-icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { getWordStateColor } from "../config/review";
 import { loadUserState } from "../services/userState";
 import { computeAiBuckets, getAiBucketWords, getBookWords, isBook } from "../services/wdbook";
 
@@ -11,19 +12,6 @@ type SortMode = "add" | "alpha";
 type WordTileStyle = CSSProperties & {
   "--word-tile-font-size": string;
 };
-
-function getTileTone(status?: "a" | "b" | "c" | "d") {
-  if (status === "b") {
-    return "tile-gray";
-  }
-  if (status === "c") {
-    return "tile-red";
-  }
-  if (status === "d") {
-    return "tile-purple";
-  }
-  return "tile-orange";
-}
 
 function getTileFontSize(word: string) {
   const safeLength = Math.max(word.length, 1);
@@ -100,8 +88,11 @@ export function WdBookDetailPage() {
               block
               fill="solid"
               size="small"
-              className={`word-tile ${getTileTone(state.wordUserMap[word]?.s)}`}
-              style={{ "--word-tile-font-size": `${getTileFontSize(word)}px` } as WordTileStyle}
+              className="word-tile"
+              style={{
+                "--word-tile-font-size": `${getTileFontSize(state.wordUserMap[word]?.displayText ?? word)}px`,
+                background: getWordStateColor(state.wordUserMap[word]?.s, state.wordUserMap[word]?.a),
+              } as WordTileStyle}
               onClick={() =>
                 navigate(`/wdbook/word/${encodeURIComponent(word)}`, {
                   state: {
@@ -111,7 +102,7 @@ export function WdBookDetailPage() {
                 })
               }
             >
-              {word}
+              {state.wordUserMap[word]?.displayText ?? word}
             </Button>
           ))}
         </div>
