@@ -19,6 +19,7 @@ const LEGACY_SEED_WORDS = ["terminate", "legate", "salient", "appall", "succeed"
 const MAX_REVIEW_STAGE = 7;
 type LegacyWordUserState = Partial<WordUserState> & {
   favorited?: boolean;
+  focused?: boolean;
   wrongCount?: number;
 };
 const LEGACY_SEED_BOOKS: Record<number, { name: string; wordsByAdd: string[] }> = {
@@ -123,7 +124,7 @@ function ensureWordState(state: AppUserData, word: string, imported = false, dis
     l: prev?.l ?? [],
     fuzzyCount: prev?.fuzzyCount ?? 0,
     ec: prev?.ec ?? prev?.wrongCount ?? 0,
-    focused: prev?.focused ?? Boolean(prev?.favorited),
+    m: prev?.m === 1 || prev?.focused || prev?.favorited ? 1 : 0,
     ignoredAt: prev?.ignoredAt,
     previousStatus: prev?.previousStatus,
     displayText: (prev?.displayText ?? displayText.trim().normalize("NFKC")) || normalized,
@@ -321,7 +322,7 @@ function migrateUserState(state: AppUserData): AppUserData {
   );
   return {
     ...next,
-    version: 2 as const,
+    version: 3 as const,
     aiBucketPrefs: normalizeAiBucketPrefs(next),
   };
 }
@@ -548,6 +549,7 @@ export function importArticleWordsToBook(bookId: number, tokens: ArticleTokenFre
 
   sortedTokens.forEach((token) => {
     const wordState = ensureWordState(next, token.key, true, token.displayText);
+    wordState.displayText = token.key;
     if (!wordState.l.includes(bookId)) {
       wordState.l = [...wordState.l, bookId];
     }
@@ -700,14 +702,14 @@ export function restoreWordReviewState(word: string) {
   return next;
 }
 
-export function toggleWordFocus(word: string) {
+export function toggleWordMark(word: string) {
   const base = loadUserState();
   const next = cloneState(base);
   const normalized = normalizeWord(word);
   const wordState = ensureWordState(next, normalized, false, word);
 
-  wordState.focused = !wordState.focused;
-  pushUpdate(next, "toggle-word-focus", { word: normalized, focused: wordState.focused });
+  wordState.m = wordState.m === 1 ? 0 : 1;
+  pushUpdate(next, "toggle-word-mark", { word: normalized, marked: wordState.m });
   saveUserState(next);
   return next;
 }

@@ -7,7 +7,7 @@ import {
   applyWordReviewAction,
   loadUserState,
   restoreWordReviewState,
-  toggleWordFocus,
+  toggleWordMark,
 } from "../services/userState";
 import { normalizeWordKey } from "../utils/articleTokenizer";
 import type { DictionaryWord, WordReviewAction, WordStateType } from "../types";
@@ -83,16 +83,24 @@ export function WdBookWordPage() {
   }
 
   function toggleFocus() {
-    const next = toggleWordFocus(decodedWord);
+    const next = toggleWordMark(decodedWord);
     setUserState(next);
-    const isFocused = next.wordUserMap[decodedWord]?.focused ?? false;
-    Toast.show({ content: isFocused ? "已加入重点关注" : "已取消重点关注" });
+    const isMarked = next.wordUserMap[decodedWord]?.m === 1;
+    Toast.show({ content: isMarked ? "已收藏" : "已取消收藏" });
   }
 
   function restoreStatus() {
     const next = restoreWordReviewState(decodedWord);
     setUserState(next);
     Toast.show({ content: "已恢复原背诵状态" });
+  }
+
+  function toggleReviewStatus(action: "cut" | "ignored", activeStatus: "b" | "c") {
+    if (wordState?.s === activeStatus) {
+      restoreStatus();
+      return;
+    }
+    applyReviewAction(action, true);
   }
 
   function goNextWord() {
@@ -149,12 +157,6 @@ export function WdBookWordPage() {
         </button>
       </section>
 
-      <section className="wdbook-word-secondary-actions">
-        <button className={wordState?.focused ? "is-active" : ""} onClick={toggleFocus} type="button">
-          {wordState?.focused ? "已重点关注" : "重点关注"}
-        </button>
-      </section>
-
       <section
         className={`wdbook-answer-card${isAnswerVisible ? " is-visible" : ""}`}
         onClick={() => {
@@ -171,6 +173,38 @@ export function WdBookWordPage() {
         tabIndex={isAnswerVisible ? undefined : 0}
       >
         <div className="wdbook-answer-badge">{wordState?.reviewCount ?? 0}</div>
+        <div
+          className="wdbook-word-quick-actions"
+          onClick={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+        >
+          <button
+            aria-label={wordState?.s === "c" ? "取消砍掉" : "砍掉"}
+            className={wordState?.s === "c" ? "is-active" : ""}
+            disabled={isCompleted}
+            onClick={() => toggleReviewStatus("cut", "c")}
+            type="button"
+          >
+            砍
+          </button>
+          <button
+            aria-label={wordState?.s === "b" ? "取消禁用" : "禁用"}
+            className={wordState?.s === "b" ? "is-active" : ""}
+            disabled={isCompleted}
+            onClick={() => toggleReviewStatus("ignored", "b")}
+            type="button"
+          >
+            禁
+          </button>
+          <button
+            aria-label={wordState?.m === 1 ? "取消收藏" : "收藏"}
+            className={wordState?.m === 1 ? "is-active" : ""}
+            onClick={toggleFocus}
+            type="button"
+          >
+            藏
+          </button>
+        </div>
         {isAnswerVisible ? (
           <div className="wdbook-answer-content">
             {wordData === undefined ? <p>加载中...</p> : null}
@@ -192,9 +226,9 @@ export function WdBookWordPage() {
       {isAnswerVisible ? (
         <footer className="wdbook-review-bar">
           {isSuspended ? (
-            <Button className="wdbook-review-wide-action" block color="primary" onClick={restoreStatus}>
-              {wordState?.s === "b" ? "取消忽略并恢复" : "取消砍掉并恢复"}
-            </Button>
+            <div className="wdbook-review-message is-wide">
+              {wordState?.s === "b" ? "该词已禁用，点击右上角“禁”恢复" : "该词已砍掉，点击右上角“砍”恢复"}
+            </div>
           ) : isCompleted ? (
             <div className="wdbook-review-message is-wide">该词已完成第 7 级背诵</div>
           ) : (
@@ -213,16 +247,10 @@ export function WdBookWordPage() {
                     模糊
                   </Button>
                   <Button block color="danger" onClick={() => applyReviewAction("forgotten", true)}>
-                    忘记
+                    不认识
                   </Button>
                 </>
               )}
-              <Button block color="primary" onClick={() => applyReviewAction("cut", true)}>
-                砍
-              </Button>
-              <Button block fill="outline" onClick={() => applyReviewAction("ignored", true)}>
-                忽略
-              </Button>
             </>
           )}
         </footer>

@@ -41,10 +41,6 @@ export function WdBookHomePage() {
   );
   const dictionaryWords = useMemo(() => getDictionaryWords(), []);
   const articleTokens = useMemo(() => extractTokenFrequencies(articleImportText), [articleImportText]);
-  const articleOccurrenceCount = useMemo(
-    () => articleTokens.reduce((total, token) => total + token.count, 0),
-    [articleTokens],
-  );
   const books = useMemo(
     () =>
       state.wordBookList
@@ -138,7 +134,9 @@ export function WdBookHomePage() {
     setArticleImportVisible(false);
     setArticleImportText("");
     setActiveBook(null);
-    Toast.show({ content: `已新增 ${addedCount} 个单词，累计 ${articleOccurrenceCount} 次出现` });
+    Toast.show({
+      content: addedCount > 0 ? `已导入 ${addedCount} 个单词` : "这些单词已在当前单词本中",
+    });
   }
 
   function closeArticleImport() {
@@ -367,10 +365,6 @@ export function WdBookHomePage() {
               placeholder="Paste an English article here..."
               value={articleImportText}
             />
-          </div>
-          <div className="article-import-summary">
-            <span>{articleTokens.length} 个单词</span>
-            <span>{articleOccurrenceCount} 次出现</span>
           </div>
         </div>
       </Popup>

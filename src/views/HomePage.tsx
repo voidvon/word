@@ -12,6 +12,15 @@ type HistoryEntry = {
   data: DictionaryWord | null;
 };
 
+const buildUpdatedAt = new Intl.DateTimeFormat("zh-CN", {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+}).format(new Date(__BUILD_TIMESTAMP__));
+
 export function HomePage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -98,6 +107,7 @@ export function HomePage() {
               <span>清空缓存</span>
             </button>
           </div>
+          <div className="home-settings-version">版本更新 {buildUpdatedAt}</div>
           <SafeArea position="bottom" />
         </aside>
       </Popup>

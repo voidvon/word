@@ -3,7 +3,7 @@ import type { AppUserData } from "../types";
 const now = Date.now();
 
 export const seedUserData: AppUserData = {
-  version: 2,
+  version: 3,
   searchList: [],
   studyList: [],
   wordUserMap: {},

@@ -21,12 +21,30 @@ export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
     ruleType: "local-rule",
   },
   {
+    key: "marked",
+    title: "⭐收藏单词",
+    tone: "orange",
+    description: "用户主动收藏的全部单词",
+    enabled: true,
+    order: 30,
+    ruleType: "local-rule",
+  },
+  {
+    key: "unknown",
+    title: "❓不认识单词",
+    tone: "gray",
+    description: "已加入单词本但尚未背诵的单词",
+    enabled: true,
+    order: 40,
+    ruleType: "local-rule",
+  },
+  {
     key: "mastered",
     title: "👍🏻砍掉的单词",
     tone: "red",
     description: "用户主动砍掉并标记为掌握的单词",
     enabled: true,
-    order: 30,
+    order: 50,
     ruleType: "local-rule",
   },
   {
@@ -35,7 +53,7 @@ export const AI_BUCKET_DEFINITIONS: AiBucketDefinition[] = [
     tone: "black",
     description: "已标记为忽略的单词",
     enabled: true,
-    order: 40,
+    order: 60,
     ruleType: "local-rule",
   },
 ];
@@ -76,6 +94,12 @@ function matchesAiBucket(bucketKey: AiBucketKey, value: WordUserState, now: numb
   }
   if (bucketKey === "hard") {
     return value.s === "a" && value.ec >= DEFAULT_REVIEW_CONFIG.errorThreshold;
+  }
+  if (bucketKey === "marked") {
+    return value.m === 1;
+  }
+  if (bucketKey === "unknown") {
+    return value.s === "n";
   }
   if (bucketKey === "mastered") {
     return value.s === "c";

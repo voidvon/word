@@ -3,7 +3,7 @@ import { Toast } from "antd-mobile";
 import { LeftOutline, StarOutline } from "antd-mobile-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { getWord, searchWords } from "../services/dictionary";
-import { addWordToBuiltinBook, loadUserState, toggleWordFocus } from "../services/userState";
+import { addWordToBuiltinBook, loadUserState, toggleWordMark } from "../services/userState";
 import type { DictionaryWord } from "../types";
 
 export function WordDetailPage() {
@@ -12,7 +12,7 @@ export function WordDetailPage() {
   const decodedWord = decodeURIComponent(word).toLowerCase();
   const [wordData, setWordData] = useState<DictionaryWord | null | undefined>(undefined);
   const [userState, setUserState] = useState(() => loadUserState());
-  const isFavorited = userState.wordUserMap[decodedWord]?.focused ?? false;
+  const isFavorited = userState.wordUserMap[decodedWord]?.m === 1;
 
   useEffect(() => {
     setWordData(undefined);
@@ -26,9 +26,9 @@ export function WordDetailPage() {
   }, [wordData]);
 
   function toggleFavorite() {
-    const next = toggleWordFocus(decodedWord);
+    const next = toggleWordMark(decodedWord);
     setUserState(next);
-    Toast.show({ content: next.wordUserMap[decodedWord]?.focused ? "已收藏" : "已取消收藏" });
+    Toast.show({ content: next.wordUserMap[decodedWord]?.m === 1 ? "已收藏" : "已取消收藏" });
   }
 
   const suggestions = useMemo(

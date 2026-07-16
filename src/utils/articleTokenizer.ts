@@ -19,8 +19,8 @@ export function extractTokenFrequencies(text: string): ArticleTokenFrequency[] {
 
   for (const match of sanitized.matchAll(ENGLISH_TOKEN_PATTERN)) {
     const prefix = match[1] ?? "";
-    const displayText = match[2] ?? "";
-    const key = normalizeWordKey(displayText);
+    const sourceText = match[2] ?? "";
+    const key = normalizeWordKey(sourceText);
     if (!key) {
       continue;
     }
@@ -33,7 +33,7 @@ export function extractTokenFrequencies(text: string): ArticleTokenFrequency[] {
 
     tokens.set(key, {
       key,
-      displayText,
+      displayText: key,
       count: 1,
       firstIndex: (match.index ?? 0) + prefix.length,
     });

@@ -196,6 +196,15 @@ input {
   padding: 18px 14px;
 }
 
+.home-settings-version {
+  flex: 0 0 auto;
+  color: #8a949e;
+  font-size: 12px;
+  line-height: 1.4;
+  padding: 12px 16px 6px;
+  text-align: center;
+}
+
 .home-clear-cache-button {
   display: flex;
   align-items: center;
@@ -896,6 +905,7 @@ input {
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 0;
   min-height: 56px;
   border: 0;
   border-radius: 14px;
@@ -905,6 +915,11 @@ input {
   line-height: 1.1;
   padding: 8px 10px;
   text-align: center;
+}
+
+.ai-bucket-card span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .ai-bucket-card strong {
@@ -921,6 +936,7 @@ input {
 .my-wordbook-item {
   position: relative;
   display: block;
+  min-width: 0;
   min-height: 72px;
   border: 0;
   border-radius: 14px;
@@ -968,6 +984,10 @@ input {
   color: var(--dictionary-blue);
   padding: 10px;
   text-align: center;
+}
+
+.my-wordbook-item--new strong {
+  white-space: normal;
 }
 
 .create-book-input-wrap {
@@ -1067,17 +1087,7 @@ input {
 }
 
 .article-import-editor {
-  margin-bottom: 8px;
-}
-
-.article-import-summary {
-  display: flex;
-  flex: 0 0 auto;
-  justify-content: space-between;
-  padding: 0 14px calc(12px + env(safe-area-inset-bottom));
-  color: #69737d;
-  font-size: 13px;
-  font-weight: 700;
+  margin-bottom: calc(12px + env(safe-area-inset-bottom));
 }
 
 .word-import-popup {
@@ -1384,29 +1394,6 @@ input {
   font-weight: 900;
 }
 
-.wdbook-word-secondary-actions {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 8px;
-  padding: 0 14px 14px;
-}
-
-.wdbook-word-secondary-actions button {
-  min-height: 36px;
-  border: 1px solid rgba(42, 49, 56, 0.08);
-  border-radius: 12px;
-  background: white;
-  color: #69737d;
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.wdbook-word-secondary-actions button.is-active {
-  border-color: rgba(47, 128, 237, 0.28);
-  background: rgba(47, 128, 237, 0.1);
-  color: #2f80ed;
-}
-
 .wdbook-answer-card {
   position: relative;
   display: grid;
@@ -1425,16 +1412,46 @@ input {
 .wdbook-answer-badge {
   position: absolute;
   top: 0;
-  right: 0;
+  left: 0;
   min-width: 48px;
   padding: 4px 10px;
-  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
   background: #ff3b30;
   color: white;
   font-size: 16px;
   font-weight: 900;
   line-height: 1.1;
   text-align: center;
+}
+
+.wdbook-word-quick-actions {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  display: flex;
+  gap: 4px;
+}
+
+.wdbook-word-quick-actions button {
+  width: 30px;
+  height: 28px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: #7a848e;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 0;
+}
+
+.wdbook-word-quick-actions button.is-active {
+  background: #f2994a;
+  color: white;
+}
+
+.wdbook-word-quick-actions button:disabled {
+  color: #c2c8ce;
 }
 
 .wdbook-answer-placeholder {
@@ -1456,7 +1473,7 @@ input {
   align-content: center;
   justify-items: center;
   gap: 10px;
-  padding: 44px 22px;
+  padding: 64px 22px 44px;
   color: #26313c;
   text-align: center;
 }
@@ -1485,7 +1502,7 @@ input {
   left: 0;
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   max-width: 760px;
   margin: 0 auto;
@@ -1497,7 +1514,7 @@ input {
 
 .wdbook-review-message {
   display: grid;
-  grid-column: span 3;
+  grid-column: 1 / -1;
   place-content: center;
   color: #59636d;
   font-size: 13px;
@@ -1512,8 +1529,7 @@ input {
   font-size: 11px;
 }
 
-.wdbook-review-message.is-wide,
-.wdbook-review-wide-action {
+.wdbook-review-message.is-wide {
   grid-column: 1 / -1;
 }
 

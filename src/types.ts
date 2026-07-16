@@ -26,6 +26,7 @@ export type DictionaryWord = {
 export type WordStateType = "n" | "a" | "b" | "c" | "d";
 export type WordReviewAction = "known" | "fuzzy" | "forgotten" | "cut" | "ignored";
 export type ReviewStage = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7;
+export type WordMarkState = 0 | 1;
 
 export type WordUserState = {
   s?: WordStateType;
@@ -38,7 +39,7 @@ export type WordUserState = {
   l: number[];
   fuzzyCount: number;
   ec: number;
-  focused: boolean;
+  m: WordMarkState;
   ignoredAt?: number;
   previousStatus?: "n" | "a";
   displayText?: string;
@@ -74,7 +75,7 @@ export type WordBookGroup = {
 export type WordBookEntity = WordBook | WordBookGroup;
 
 export type AppUserData = {
-  version: 2;
+  version: 3;
   searchList: string[];
   studyList: string[];
   wordUserMap: WordUserStateMap;
@@ -97,6 +98,8 @@ export type AiBucketRuleType = "local-rule" | "ai-generated" | "remote";
 export type AiBucketKey =
   | "due"
   | "hard"
+  | "marked"
+  | "unknown"
   | "mastered"
   | "ignored";
 
